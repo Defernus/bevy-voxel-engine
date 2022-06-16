@@ -39,9 +39,8 @@ impl ChunkComponent {
         pos: PosComponent,
     ) {
         let mut chunk = ChunkComponent::new();
-        chunk.generate(pos.clone(), generator);
-        let vertices = chunk.generate_vertices(pos.clone());
-        println!("vertices size: {}", vertices.len());
+        chunk.generate(pos, generator);
+        let vertices = chunk.generate_vertices(pos);
 
         let mesh = StaticMeshComponent::spawn(commands, meshes, materials, vertices);
 
