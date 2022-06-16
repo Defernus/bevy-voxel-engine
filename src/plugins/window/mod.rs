@@ -1,4 +1,8 @@
-use bevy::{app::AppExit, prelude::*};
+use bevy::{
+    app::AppExit,
+    diagnostic::{Diagnostics, FrameTimeDiagnosticsPlugin},
+    prelude::*,
+};
 
 pub struct WindowPlugin;
 
@@ -15,9 +19,23 @@ fn window_close_system(mut exit: EventWriter<AppExit>, keys: Res<Input<KeyCode>>
     }
 }
 
+fn window_fps_system(mut windows: ResMut<Windows>, diagnostics: Res<Diagnostics>) {
+    let window = windows.get_primary_mut().unwrap();
+    let fps = diagnostics
+        .get(FrameTimeDiagnosticsPlugin::FPS)
+        .expect("fps plugin not added");
+    match fps.value() {
+        Some(average) => {
+            window.set_title(format!("fps: {}", average as i32));
+        }
+        _ => {}
+    }
+}
+
 impl Plugin for WindowPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(window_startup_system)
-            .add_system(window_close_system);
+            .add_system(window_close_system)
+            .add_system(window_fps_system);
     }
 }

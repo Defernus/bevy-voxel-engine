@@ -1,11 +1,11 @@
 use bevy::{input::mouse::MouseMotion, prelude::*};
 
-use crate::components::camera::CameraComponent;
+use crate::components::player::PlayerComponent;
 
-pub(super) fn camera_rotate_system(
+pub(super) fn player_rotate_system(
     mut ev_motion: EventReader<MouseMotion>,
     windows: Res<Windows>,
-    mut camera: Query<&mut Transform, With<CameraComponent>>,
+    mut camera: Query<&mut Transform, With<PlayerComponent>>,
 ) {
     let window = windows.get_primary().unwrap();
     let window_size = Vec2::new(window.width() as f32, window.height() as f32);

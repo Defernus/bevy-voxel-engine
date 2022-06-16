@@ -121,6 +121,22 @@ impl ChunkComponent {
         }
     }
 
+    pub fn get_chunk_pos(pos: PosComponent) -> PosComponent {
+        PosComponent::new(
+            Self::cord_to_chunk_cord(pos.x),
+            Self::cord_to_chunk_cord(pos.y),
+            Self::cord_to_chunk_cord(pos.z),
+        )
+    }
+
+    pub fn get_chunk_pos_by_transform(transform: &Transform) -> PosComponent {
+        Self::get_chunk_pos(PosComponent::new(
+            transform.translation.x as i64,
+            transform.translation.y as i64,
+            transform.translation.z as i64,
+        ))
+    }
+
     pub fn get_voxel(&self, in_chunk_position: PosComponent) -> Option<Voxel> {
         match Self::pos_to_index(in_chunk_position.clone()) {
             Some(index) => {

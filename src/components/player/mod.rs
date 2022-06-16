@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 
-#[derive(Component, Default)]
-pub struct CameraComponent {}
+#[derive(Component)]
+pub struct PlayerComponent;
 
-impl CameraComponent {
+impl PlayerComponent {
     pub fn new() -> Self {
         Self {}
     }
@@ -14,6 +14,6 @@ impl CameraComponent {
                 transform: Transform::from_xyz(0., 50., -50.0).looking_at(Vec3::ZERO, Vec3::Y),
                 ..default()
             })
-            .insert(CameraComponent {});
+            .insert(PlayerComponent);
     }
 }

@@ -1,10 +1,10 @@
-use crate::components::camera::CameraComponent;
+use crate::components::player::PlayerComponent;
 use bevy::prelude::*;
 
-pub(super) fn camera_move_system(
+pub(super) fn player_move_system(
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
-    mut camera: Query<&mut Transform, With<CameraComponent>>,
+    mut camera: Query<&mut Transform, With<PlayerComponent>>,
 ) {
     let mut cam = camera.get_single_mut().expect("camera does not exists yet");
     let imut_cam = cam.clone();
