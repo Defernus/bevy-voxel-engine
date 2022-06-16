@@ -10,7 +10,7 @@ fn window_startup_system(mut windows: ResMut<Windows>) {
 }
 
 fn window_close_system(mut exit: EventWriter<AppExit>, keys: Res<Input<KeyCode>>) {
-    if keys.pressed(KeyCode::Q) {
+    if keys.pressed(KeyCode::Escape) {
         exit.send(AppExit);
     }
 }
