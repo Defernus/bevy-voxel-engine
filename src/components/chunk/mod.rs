@@ -38,6 +38,8 @@ impl ChunkComponent {
         generator: &GeneratorResource,
         pos: PosComponent,
     ) {
+        println!("spawn chunk at {:?}", pos);
+
         let mut chunk = ChunkComponent::new();
         chunk.generate(pos, generator);
         let vertices = chunk.generate_vertices(pos);

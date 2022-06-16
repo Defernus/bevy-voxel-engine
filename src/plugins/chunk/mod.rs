@@ -12,7 +12,7 @@ fn chunk_startup_system(
     mut materials: ResMut<Assets<StandardMaterial>>,
     generator: Res<GeneratorResource>,
 ) {
-    let range = -4..2;
+    let range = -2..0;
     for x in range.clone() {
         for y in range.clone() {
             for z in range.clone() {
