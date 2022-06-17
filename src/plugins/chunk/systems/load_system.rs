@@ -16,6 +16,7 @@ use bevy::prelude::*;
 use crossbeam_channel::unbounded;
 
 pub const DEFAULT_RADIUS: usize = 5;
+pub const CHUNKS_SPAWN_AT_ONCE: usize = 4;
 
 impl ChunkLoadIterator {
     pub fn new(pos: PosComponent) -> Self {
@@ -29,29 +30,31 @@ fn generate_chunk(
     commands: &mut Commands,
     generator: &GeneratorRes,
 ) -> Option<()> {
-    let mut pos = chunk_load_iter.0.next()?;
+    for _ in 0..CHUNKS_SPAWN_AT_ONCE {
+        let mut pos = chunk_load_iter.0.next()?;
 
-    while in_world_chunks.0.contains(&pos) {
-        pos = chunk_load_iter.0.next()?
-    }
-    in_world_chunks.0.insert(pos);
-
-    let (tx, rx) = unbounded();
-
-    let gen = generator.clone();
-    std::thread::spawn(move || {
-        let mut chunk = ChunkComponent::new(&gen, pos);
-        let vertices = chunk.generate_vertices(pos);
-
-        match tx.send((pos, Box::new(chunk), vertices)) {
-            Err(err) => {
-                panic!("failed to send chunk data after generation: {}", err);
-            }
-            _ => {}
+        while in_world_chunks.0.contains(&pos) {
+            pos = chunk_load_iter.0.next()?
         }
-    });
+        in_world_chunks.0.insert(pos);
 
-    commands.spawn().insert(ComputeChunkGeneration(rx));
+        let (tx, rx) = unbounded();
+
+        let gen = generator.clone();
+        std::thread::spawn(move || {
+            let mut chunk = ChunkComponent::new(&gen, pos);
+            let vertices = chunk.generate_vertices(pos);
+
+            match tx.send((pos, Box::new(chunk), vertices)) {
+                Err(err) => {
+                    panic!("failed to send chunk data after generation: {}", err);
+                }
+                _ => {}
+            }
+        });
+
+        commands.spawn().insert(ComputeChunkGeneration(rx));
+    }
     Some(())
 }
 
