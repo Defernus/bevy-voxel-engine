@@ -1,8 +1,7 @@
 use bevy::{math::Vec3, prelude::Color};
 
-use crate::components::{
-    chunk::{pos::PosComponent, ChunkComponent},
-    static_mesh::vertex::Vertex,
+use crate::plugins::chunk::components::{
+    pos::PosComponent, static_mesh::vertex::Vertex, ChunkComponent,
 };
 
 use self::triangulation_table::{get_index_by_voxels, TABLE};

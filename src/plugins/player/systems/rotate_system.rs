@@ -1,8 +1,8 @@
 use bevy::{input::mouse::MouseMotion, prelude::*};
 
-use crate::components::player::PlayerComponent;
+use crate::plugins::player::components::PlayerComponent;
 
-pub(super) fn player_rotate_system(
+pub fn player_rotate_system(
     mut ev_motion: EventReader<MouseMotion>,
     windows: Res<Windows>,
     mut camera: Query<&mut Transform, With<PlayerComponent>>,
@@ -21,6 +21,6 @@ pub(super) fn player_rotate_system(
     let delta_y = rotation_move.y / window_size.y * std::f32::consts::PI;
     let yaw = Quat::from_rotation_y(-delta_x);
     let pitch = Quat::from_rotation_x(-delta_y);
-    transform.rotation = yaw * transform.rotation; // rotate around global y axis
-    transform.rotation = transform.rotation * pitch; // rotate around local x axis
+    transform.rotation = yaw * transform.rotation;
+    transform.rotation = transform.rotation * pitch;
 }

@@ -163,6 +163,7 @@ pub struct PosComponentAroundIterator {
     start: PosComponent,
     current: PosComponent,
     current_radius: i64,
+    done: bool,
     radius: i64,
 }
 
@@ -171,9 +172,13 @@ impl PosComponentAroundIterator {
         Self {
             radius: radius as i64,
             start,
+            done: false,
             current_radius: 0,
             current: PosComponent::new(0, -(radius as i64), 0),
         }
+    }
+    pub fn is_done(&self) -> bool {
+        self.done
     }
 }
 
@@ -183,6 +188,7 @@ impl Iterator for PosComponentAroundIterator {
     fn next(&mut self) -> Option<PosComponent> {
         let r = self.current_radius;
         if self.radius == r {
+            self.done = true;
             return None;
         }
 

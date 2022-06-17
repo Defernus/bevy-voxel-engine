@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 bevy = { git = "https://github.com/bevyengine/bevy.git", branch = "main", features = ["dynamic"] }
 noise = "0.7.0"
+crossbeam-channel = "0.5.5"

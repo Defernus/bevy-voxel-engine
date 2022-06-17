@@ -1,7 +1,8 @@
-use crate::components::player::PlayerComponent;
 use bevy::prelude::*;
 
-pub(super) fn player_move_system(
+use crate::plugins::player::components::PlayerComponent;
+
+pub fn player_move_system(
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
     mut camera: Query<&mut Transform, With<PlayerComponent>>,

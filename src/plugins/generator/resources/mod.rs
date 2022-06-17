@@ -1,14 +1,15 @@
-use crate::components::chunk::voxel::Voxel;
+use crate::plugins::chunk::components::voxel::Voxel;
 use bevy::{math::Vec3, prelude::Color};
 use noise::NoiseFn;
 
-pub struct GeneratorResource {
+#[derive(Clone)]
+pub struct GeneratorRes {
     simplex: noise::OpenSimplex,
     scale: f64,
     noise_threshold: f64,
 }
 
-impl GeneratorResource {
+impl GeneratorRes {
     fn get_level_val(&self, pos: Vec3) -> f64 {
         let mut noise_v: f64 = (pos.y as f64)
             + (self.simplex.get([
@@ -100,7 +101,7 @@ impl GeneratorResource {
     }
 }
 
-impl Default for GeneratorResource {
+impl Default for GeneratorRes {
     fn default() -> Self {
         Self {
             simplex: noise::OpenSimplex::new(),

@@ -1,16 +1,8 @@
-use crate::{
-    components::chunk::{pos::PosComponent, ChunkComponent},
-    resources::generator::GeneratorResource,
-};
 use bevy::prelude::*;
+
 pub struct WorldPlugin;
 
-fn world_startup_system(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    generator: Res<GeneratorResource>,
-) {
+fn world_startup_system(mut commands: Commands) {
     commands.insert_resource(AmbientLight {
         color: Color::WHITE,
         brightness: 0.5,
@@ -29,21 +21,6 @@ fn world_startup_system(
         },
         ..default()
     });
-
-    let range = -2..0;
-    for x in range.clone() {
-        for y in range.clone() {
-            for z in range.clone() {
-                ChunkComponent::spawn(
-                    &mut commands,
-                    &mut meshes,
-                    &mut materials,
-                    &generator,
-                    PosComponent::new(x, y, z),
-                );
-            }
-        }
-    }
 }
 
 impl Plugin for WorldPlugin {

@@ -1,11 +1,8 @@
+use crate::plugins::player::components::PlayerComponent;
 use bevy::prelude::*;
 
-use crate::components::player::PlayerComponent;
-
-use self::{move_system::player_move_system, rotate_system::player_rotate_system};
-
-mod move_system;
-mod rotate_system;
+pub mod components;
+mod systems;
 pub struct PlayerPlugin;
 
 fn player_startup_system(mut commands: Commands) {
@@ -15,7 +12,7 @@ fn player_startup_system(mut commands: Commands) {
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(player_startup_system)
-            .add_system(player_move_system)
-            .add_system(player_rotate_system);
+            .add_system(systems::move_system::player_move_system)
+            .add_system(systems::rotate_system::player_rotate_system);
     }
 }

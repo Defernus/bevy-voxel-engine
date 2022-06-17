@@ -1,15 +1,17 @@
 use self::{
-    chunk_state::{ChunkState, ChunkStateComponent},
-    pos::PosComponent,
+    static_mesh::vertex::Vertex,
     voxel::{voxels_to_vertex::append_vertex, Voxel},
 };
-use crate::{components::static_mesh::vertex::Vertex, resources::generator::GeneratorResource};
+
+use crate::plugins::generator::resources::GeneratorRes;
 use bevy::prelude::*;
 
-use super::static_mesh::StaticMeshComponent;
+use self::pos::PosComponent;
 
 pub mod chunk_state;
+pub mod compute_chunk_generation;
 pub mod pos;
+pub mod static_mesh;
 pub mod voxel;
 
 pub const CHUNK_REAL_SIZE: usize = 16;
@@ -22,36 +24,17 @@ pub struct ChunkComponent {
 }
 
 impl ChunkComponent {
-    pub fn new() -> Self {
-        Self {
+    pub fn new(generator: &GeneratorRes, pos: PosComponent) -> Self {
+        let mut chunk = Self {
             voxels: [Voxel {
                 value: 0.,
                 color: Color::rgb(0., 0., 0.),
             }; CHUNK_VOXELS_VOLUME],
-        }
-    }
+        };
 
-    pub fn spawn(
-        commands: &mut Commands,
-        meshes: &mut ResMut<Assets<Mesh>>,
-        materials: &mut ResMut<Assets<StandardMaterial>>,
-        generator: &GeneratorResource,
-        pos: PosComponent,
-    ) {
-        println!("spawn chunk at {:?}", pos);
-
-        let mut chunk = ChunkComponent::new();
         chunk.generate(pos, generator);
-        let vertices = chunk.generate_vertices(pos);
 
-        let mesh = StaticMeshComponent::spawn(commands, meshes, materials, vertices);
-
-        commands
-            .spawn()
-            .insert(chunk)
-            .insert(pos)
-            .insert(ChunkStateComponent(ChunkState::NotInitialized))
-            .add_child(mesh);
+        chunk
     }
 
     pub fn generate_vertices(&mut self, pos: PosComponent) -> Vec<Vertex> {
@@ -79,7 +62,7 @@ impl ChunkComponent {
         vertices
     }
 
-    pub fn generate_voxels(&mut self, pos: PosComponent, generator: &GeneratorResource) {
+    pub fn generate_voxels(&mut self, pos: PosComponent, generator: &GeneratorRes) {
         let offset = Vec3::new(
             (pos.x * CHUNK_REAL_SIZE as i64) as f32,
             (pos.y * CHUNK_REAL_SIZE as i64) as f32,
@@ -89,7 +72,7 @@ impl ChunkComponent {
         generator.generate_voxels(offset, &mut self.voxels, CHUNK_VOXELS_SIZE)
     }
 
-    pub fn generate(&mut self, pos: PosComponent, generator: &GeneratorResource) {
+    pub fn generate(&mut self, pos: PosComponent, generator: &GeneratorRes) {
         self.generate_voxels(pos, generator);
     }
 
