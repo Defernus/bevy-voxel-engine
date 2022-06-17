@@ -15,7 +15,7 @@ impl StaticMeshComponent {
         materials: &mut ResMut<Assets<StandardMaterial>>,
         vertices: Vec<Vertex>,
     ) -> Entity {
-        let mut indices_vec = vec![0, 2, 1];
+        let mut indices_vec = Vec::new();
 
         let mut positions: Vec<[f32; 3]> = Vec::new();
         let mut normals: Vec<[f32; 3]> = Vec::new();
