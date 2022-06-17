@@ -69,7 +69,6 @@ pub fn chunk_load_system(
     let player_chunk_pos = ChunkComponent::get_chunk_pos_by_transform(player_transform);
 
     if player_chunk_pos != prev_player_chunk_pos.0 {
-        println!("player chunk position changed");
         prev_player_chunk_pos.0 = player_chunk_pos;
         chunk_load_iter.0 = player_chunk_pos.iter_around(DEFAULT_RADIUS);
     }
