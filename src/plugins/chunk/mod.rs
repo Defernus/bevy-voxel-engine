@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use self::components::pos::PosComponent;
 use self::resources::{ChunkLoadIterator, InWorldChunks, PrevPlayerPos};
 use self::systems::load_system::{chunk_load_system, spawn_chunk_system};
+use self::systems::unload_system::unload_chunk_system;
 
 pub mod components;
 pub mod resources;
@@ -18,6 +19,7 @@ impl Plugin for ChunkPlugin {
             .insert_resource(PrevPlayerPos(PosComponent::new(0, 0, 0)))
             .insert_resource(ChunkLoadIterator::new(PosComponent::new(0, 0, 0)))
             .add_system(chunk_load_system)
+            .add_system(unload_chunk_system)
             .add_system(spawn_chunk_system);
     }
 }
