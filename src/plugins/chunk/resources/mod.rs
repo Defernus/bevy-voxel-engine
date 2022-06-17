@@ -12,3 +12,6 @@ impl InWorldChunks {
 
 pub struct PrevPlayerPos(pub PosComponent);
 pub struct ChunkLoadIterator(pub PosComponentAroundIterator);
+
+pub struct ChunkLoadingEnabled(pub bool);
+pub struct ChunkUnloadingEnabled(pub bool);

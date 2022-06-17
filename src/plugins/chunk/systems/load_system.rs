@@ -7,7 +7,7 @@ use crate::plugins::{
             static_mesh::StaticMeshComponent,
             ChunkComponent,
         },
-        resources::{ChunkLoadIterator, InWorldChunks, PrevPlayerPos},
+        resources::{ChunkLoadIterator, ChunkLoadingEnabled, InWorldChunks, PrevPlayerPos},
     },
     generator::resources::GeneratorRes,
     player::components::PlayerComponent,
@@ -59,11 +59,16 @@ pub fn chunk_load_system(
     mut in_world_chunks: ResMut<InWorldChunks>,
     mut prev_player_chunk_pos: ResMut<PrevPlayerPos>,
     mut chunk_load_iter: ResMut<ChunkLoadIterator>,
+    chunk_load_enabled: Res<ChunkLoadingEnabled>,
     player_transform_q: Query<&Transform, With<PlayerComponent>>,
 
     mut commands: Commands,
     generator: Res<GeneratorRes>,
 ) {
+    if !chunk_load_enabled.0 {
+        return;
+    }
+
     let player_transform = player_transform_q.single();
 
     let player_chunk_pos = ChunkComponent::get_chunk_pos_by_transform(player_transform);
