@@ -8,8 +8,7 @@ use crate::plugins::{
     player::components::PlayerComponent,
 };
 
-pub const MAX_RENDER_DISTANCE: usize = 10;
-const MAX_ENTITY_TO_DESPAWN_AT_ONCE: usize = 4;
+pub const MAX_RENDER_DISTANCE: usize = 7;
 
 pub fn unload_chunk_system(
     mut commands: Commands,
@@ -31,12 +30,9 @@ pub fn unload_chunk_system(
 
             commands.entity(e).despawn_recursive();
             despawned += 1;
-            if despawned >= MAX_ENTITY_TO_DESPAWN_AT_ONCE {
-                break;
-            }
         }
     }
     if despawned > 0 {
-        println!("despawned {} entities", despawned);
+        println!("unloaded {} chunks", despawned);
     }
 }
