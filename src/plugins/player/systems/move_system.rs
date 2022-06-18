@@ -1,14 +1,21 @@
 use bevy::prelude::*;
 
-use crate::plugins::player::components::PlayerComponent;
+use crate::plugins::{
+    camera::components::{update_camera_transform, CameraComponent},
+    player::components::PlayerComponent,
+};
 
 pub fn player_move_system(
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
-    mut player: Query<&mut Transform, With<PlayerComponent>>,
+    mut camera: Query<&mut Transform, (With<CameraComponent>, Without<PlayerComponent>)>,
+    mut player: Query<&mut Transform, (With<PlayerComponent>, Without<CameraComponent>)>,
 ) {
-    let mut cam = player.get_single_mut().expect("player does not exists yet");
-    let imut_cam = cam.clone();
+    let mut camera = camera.get_single_mut().expect("camera does not exists yet");
+    let camera = camera.as_mut();
+
+    let mut player = player.get_single_mut().expect("player does not exists yet");
+    let imut_player = player.clone();
 
     let dt = time.delta_seconds_f64() as f32;
     let speed = if keys.pressed(KeyCode::LShift) {
@@ -18,26 +25,28 @@ pub fn player_move_system(
     };
 
     if keys.pressed(KeyCode::W) {
-        cam.translation += imut_cam.forward() * speed * dt;
+        player.translation += imut_player.forward() * speed * dt;
     }
 
     if keys.pressed(KeyCode::S) {
-        cam.translation += imut_cam.back() * speed * dt;
+        player.translation += imut_player.back() * speed * dt;
     }
 
     if keys.pressed(KeyCode::A) {
-        cam.translation += imut_cam.left() * speed * dt;
+        player.translation += imut_player.left() * speed * dt;
     }
 
     if keys.pressed(KeyCode::D) {
-        cam.translation += imut_cam.right() * speed * dt;
+        player.translation += imut_player.right() * speed * dt;
     }
 
     if keys.pressed(KeyCode::LControl) {
-        cam.translation -= Vec3::Y * speed * dt;
+        player.translation -= Vec3::Y * speed * dt;
     }
 
     if keys.pressed(KeyCode::Space) {
-        cam.translation += Vec3::Y * speed * dt;
+        player.translation += Vec3::Y * speed * dt;
     }
+
+    update_camera_transform(imut_player, camera);
 }

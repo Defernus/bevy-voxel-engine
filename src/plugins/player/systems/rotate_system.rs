@@ -1,12 +1,19 @@
 use bevy::{input::mouse::MouseMotion, prelude::*};
 
-use crate::plugins::player::components::PlayerComponent;
+use crate::plugins::{
+    camera::components::{update_camera_transform, CameraComponent},
+    player::components::PlayerComponent,
+};
 
 pub fn player_rotate_system(
     mut ev_motion: EventReader<MouseMotion>,
     windows: Res<Windows>,
-    mut player: Query<&mut Transform, With<PlayerComponent>>,
+    mut camera: Query<&mut Transform, (With<CameraComponent>, Without<PlayerComponent>)>,
+    mut player: Query<&mut Transform, (With<PlayerComponent>, Without<CameraComponent>)>,
 ) {
+    let mut camera = camera.get_single_mut().expect("camera does not exists yet");
+    let camera = camera.as_mut();
+
     let window = windows.get_primary().unwrap();
     let window_size = Vec2::new(window.width() as f32, window.height() as f32);
     let mut transform = player.get_single_mut().expect("player does not exists yet");
@@ -23,4 +30,6 @@ pub fn player_rotate_system(
     let pitch = Quat::from_rotation_x(-delta_y);
     transform.rotation = yaw * transform.rotation;
     transform.rotation = transform.rotation * pitch;
+
+    update_camera_transform(transform.clone(), camera);
 }

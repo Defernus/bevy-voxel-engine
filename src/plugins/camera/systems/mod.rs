@@ -4,8 +4,6 @@ use bevy_mod_raycast::RayCastSource;
 
 use super::components::CameraComponent;
 
-pub mod follow_system;
-
 pub fn camera_startup_system(mut commands: Commands) {
     commands
         .spawn_bundle(Camera3dBundle {
