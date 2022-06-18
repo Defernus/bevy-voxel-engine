@@ -3,8 +3,8 @@ use bevy_mod_raycast::DefaultRaycastingPlugin;
 use voxel_engine_bevy::{
     common::components::ray_let::RayLet,
     plugins::{
-        chunk::ChunkPlugin, generator::GeneratorPlugin, player::PlayerPlugin, window::WindowPlugin,
-        world::WorldPlugin,
+        camera::CameraPlugin, chunk::ChunkPlugin, generator::GeneratorPlugin, player::PlayerPlugin,
+        window::WindowPlugin, world::WorldPlugin,
     },
 };
 
@@ -20,6 +20,7 @@ fn main() {
         .add_plugin(WindowPlugin)
         .add_plugin(GeneratorPlugin)
         .add_plugin(PlayerPlugin)
+        .add_plugin(CameraPlugin)
         .add_plugin(WorldPlugin)
         .add_plugin(ChunkPlugin)
         .run();

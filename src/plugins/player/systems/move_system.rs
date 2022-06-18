@@ -5,9 +5,9 @@ use crate::plugins::player::components::PlayerComponent;
 pub fn player_move_system(
     keys: Res<Input<KeyCode>>,
     time: Res<Time>,
-    mut camera: Query<&mut Transform, With<PlayerComponent>>,
+    mut player: Query<&mut Transform, With<PlayerComponent>>,
 ) {
-    let mut cam = camera.get_single_mut().expect("camera does not exists yet");
+    let mut cam = player.get_single_mut().expect("player does not exists yet");
     let imut_cam = cam.clone();
 
     let dt = time.delta_seconds_f64() as f32;
