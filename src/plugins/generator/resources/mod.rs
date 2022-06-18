@@ -1,4 +1,7 @@
-use bevy::{math::Vec3, prelude::Color};
+use bevy::{
+    math::{Vec2, Vec3},
+    prelude::Color,
+};
 use noise::NoiseFn;
 
 use crate::plugins::chunk::resources::chunk::voxel::Voxel;
@@ -11,16 +14,34 @@ pub struct GeneratorRes {
 }
 
 impl GeneratorRes {
-    fn get_level_val(&self, pos: Vec3) -> f64 {
-        let mut noise_v: f64 = (pos.y as f64)
-            + (self.simplex.get([
-                (pos.x as f64) * 0.456 * self.scale,
-                (pos.z as f64) * 0.456 * self.scale,
-            ]) + 1.)
-                * 10.
-            + (self.simplex.get([pos.x as f64, pos.z as f64]) + 1.) * 0.001;
+    fn get_float_scale(&self, pos: Vec2) -> f64 {
+        let result = self.simplex.get([
+            (pos.x as f64) * 0.1 * self.scale,
+            (pos.y as f64) * 0.1 * self.scale,
+        ]);
 
-        noise_v -= self.noise_threshold;
+        let result = 1. + result * 0.25;
+
+        return result;
+    }
+    fn get_level_val(&self, pos: Vec3) -> f64 {
+        let noise_float_scale = self.get_float_scale(Vec2::new(pos.x, pos.z));
+
+        let main_level = (self.simplex.get([
+            (pos.x as f64) * noise_float_scale as f64 * 0.456 * self.scale,
+            (pos.z as f64) * noise_float_scale as f64 * 0.456 * self.scale,
+        ]) + 1.)
+            / 2.;
+
+        let small_noise = self.simplex.get([
+            pos.x as f64 * self.scale * 10.,
+            pos.z as f64 * self.scale * 10.,
+        ]) * 0.01
+            + 1.;
+
+        let mut noise_v: f64 = (pos.y as f64) + main_level * 20. * small_noise;
+
+        noise_v += pos.length() as f64 / 2.;
         noise_v /= 100. / self.scale;
 
         return -noise_v;
@@ -86,7 +107,7 @@ impl GeneratorRes {
                     let mut color = Color::rgb(0.3, 0.3, 0.4);
 
                     if level < 0.03 * self.scale {
-                        color = Color::rgb(0.2, 0.7, 0.3);
+                        color = Color::rgb(1., 1., 1.);
                     }
 
                     let mut noise_v = self.get_cliffs_val(pos);
@@ -108,7 +129,7 @@ impl Default for GeneratorRes {
         Self {
             simplex: noise::OpenSimplex::new(),
             scale: 0.1,
-            noise_threshold: 0.6,
+            noise_threshold: 0.7,
         }
     }
 }
