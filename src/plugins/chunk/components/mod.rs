@@ -1,14 +1,13 @@
-use self::{
-    static_mesh::vertex::Vertex,
-    voxel::{voxels_to_vertex::append_vertex, Voxel},
-};
+use self::voxel::{voxels_to_vertex::append_vertex, Voxel};
 
-use crate::{common::components::pos::PosComponent, plugins::generator::resources::GeneratorRes};
+use crate::{
+    common::{components::pos::PosComponent, static_mesh::vertex::Vertex},
+    plugins::generator::resources::GeneratorRes,
+};
 use bevy::prelude::*;
 
 pub mod chunk_state;
 pub mod compute_chunk_generation;
-pub mod static_mesh;
 pub mod voxel;
 
 pub const CHUNK_REAL_SIZE: usize = 16;

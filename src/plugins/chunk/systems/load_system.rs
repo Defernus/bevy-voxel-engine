@@ -1,11 +1,10 @@
 use crate::{
-    common::components::pos::PosComponent,
+    common::{components::pos::PosComponent, static_mesh::StaticMeshComponent},
     plugins::{
         chunk::{
             components::{
                 chunk_state::{ChunkState, ChunkStateComponent},
                 compute_chunk_generation::ComputeChunkGeneration,
-                static_mesh::StaticMeshComponent,
                 ChunkComponent,
             },
             resources::{ChunkLoadIterator, ChunkLoadingEnabled, InWorldChunks, PrevPlayerPos},
