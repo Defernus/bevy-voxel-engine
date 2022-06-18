@@ -1,12 +1,8 @@
 use crate::{
-    common::components::{pos::PosComponent, static_mesh::StaticMeshComponent},
+    common::components::pos::PosComponent,
     plugins::{
         chunk::{
-            components::{
-                chunk_state::{ChunkState, ChunkStateComponent},
-                compute_chunk_generation::ComputeChunkGeneration,
-                ChunkComponent,
-            },
+            components::{compute_chunk_generation::ComputeChunkGeneration, spawn_chunk_component},
             resources::{
                 chunk::Chunk, ChunkLoadIterator, ChunkLoadingEnabled, InWorldChunk, InWorldChunks,
                 PrevPlayerPos,
@@ -109,20 +105,13 @@ pub fn spawn_chunk_system(
     for (e, ComputeChunkGeneration(rx)) in generation_task.iter() {
         match rx.try_recv() {
             Ok((pos, chunk, vertices)) => {
-                let mesh = StaticMeshComponent::spawn(
+                let chunk_entity = spawn_chunk_component(
                     &mut commands,
                     &mut meshes,
                     &mut materials,
                     vertices,
+                    pos,
                 );
-
-                let chunk_entity = commands
-                    .spawn()
-                    .insert(ChunkComponent)
-                    .insert(pos)
-                    .insert(ChunkStateComponent(ChunkState::NotInitialized))
-                    .add_child(mesh)
-                    .id();
                 commands.entity(e).despawn();
                 in_world_chunks
                     .0

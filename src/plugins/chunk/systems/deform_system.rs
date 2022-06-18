@@ -2,13 +2,10 @@ use bevy::prelude::*;
 use bevy_mod_raycast::Intersection;
 
 use crate::{
-    common::components::{pos::PosComponent, ray_let::RayLet, static_mesh::StaticMeshComponent},
+    common::components::{pos::PosComponent, ray_let::RayLet},
     plugins::{
         chunk::{
-            components::{
-                chunk_state::{ChunkState, ChunkStateComponent},
-                ChunkComponent,
-            },
+            components::spawn_chunk_component,
             resources::{
                 chunk::{voxel::Voxel, Chunk},
                 InWorldChunk, InWorldChunks,
@@ -58,13 +55,9 @@ fn deform_chunk(
         match chunks.0.get_mut(&chunk_pos)?.as_mut() {
             InWorldChunk::Loaded(chunk, e) => {
                 let blocks_effected = match deform_type {
-                    DeformType::Dig => chunk.dig(
-                        generator,
-                        chunk_pos,
-                        voxel_pos,
-                        DEFORM_RADIUS,
-                        dt * DEFORM_SPEED,
-                    ),
+                    DeformType::Dig => {
+                        chunk.dig(chunk_pos, voxel_pos, DEFORM_RADIUS, dt * DEFORM_SPEED)
+                    }
                     DeformType::Fill(voxel) => chunk.fill(
                         generator,
                         chunk_pos,
@@ -79,15 +72,7 @@ fn deform_chunk(
                 }
                 let vertices = chunk.generate_vertices(chunk_pos);
                 commands.entity(*e).despawn_recursive();
-                let mesh = StaticMeshComponent::spawn(commands, meshes, materials, vertices);
-
-                *e = commands
-                    .spawn()
-                    .insert(ChunkComponent)
-                    .insert(chunk_pos)
-                    .insert(ChunkStateComponent(ChunkState::NotInitialized))
-                    .add_child(mesh)
-                    .id();
+                *e = spawn_chunk_component(commands, meshes, materials, vertices, chunk_pos);
             }
             _ => {}
         }

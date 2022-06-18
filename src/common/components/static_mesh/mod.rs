@@ -8,7 +8,7 @@ use super::ray_let::RayLet;
 pub mod vertex;
 
 #[derive(Component, Clone, Copy)]
-pub struct StaticMeshComponent {}
+pub struct StaticMeshComponent;
 
 impl StaticMeshComponent {
     pub fn spawn(
@@ -54,7 +54,7 @@ impl StaticMeshComponent {
                 }),
                 ..default()
             })
-            .insert(StaticMeshComponent {})
+            .insert(StaticMeshComponent)
             .insert(RayCastMesh::<RayLet>::default())
             .id();
     }

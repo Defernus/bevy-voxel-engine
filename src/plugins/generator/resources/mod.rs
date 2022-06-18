@@ -64,9 +64,9 @@ impl GeneratorRes {
             (pos.z as f64) / 2.3,
         ]) * factor;
         Color::rgb(
-            (color.r() + dr as f32).max(0.).min(1.),
-            (color.g() + dg as f32).max(0.).min(1.),
-            (color.b() + db as f32).max(0.).min(1.),
+            (color.r() + color.r() * dr as f32).max(0.).min(1.),
+            (color.g() + color.g() * dg as f32).max(0.).min(1.),
+            (color.b() + color.b() * db as f32).max(0.).min(1.),
         )
     }
 
@@ -93,7 +93,7 @@ impl GeneratorRes {
                     noise_v = noise_v.min(level);
 
                     voxels[x + y * size + z * size * size] = Voxel {
-                        color: self.randomize_color(pos, color, 0.07),
+                        color: self.randomize_color(pos, color, 0.2),
                         value: noise_v.max(-0.1).min(1.) as f32,
                     };
                 }

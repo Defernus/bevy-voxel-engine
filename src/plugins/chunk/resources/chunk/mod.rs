@@ -137,7 +137,6 @@ impl Chunk {
 
     pub fn dig(
         &mut self,
-        generator: &GeneratorRes,
         chunk_pos: PosComponent,
         voxel_pos: PosComponent,
         radius: f32,
@@ -179,9 +178,9 @@ impl Chunk {
             let delta_vec = Vec3::new(delta_pos.x as f32, delta_pos.y as f32, delta_pos.z as f32);
             let l = delta_vec.length();
 
-            if l < radius && self.voxels[i].value <= 0. {
+            if l < radius {
                 count += 1;
-                self.voxels[i].color = generator.randomize_color(pos.to_vec(), voxel.color, 0.07);
+                self.voxels[i].color = generator.randomize_color(pos.to_vec(), voxel.color, 0.2);
                 self.voxels[i].value = self.voxels[i].value.max(-0.001);
                 self.voxels[i].value += value * (radius - l) / radius / (self.voxels[i].value + 1.);
                 self.voxels[i].value = self.voxels[i].value.min(1.);
