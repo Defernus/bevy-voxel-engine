@@ -1,7 +1,7 @@
 use bevy::{math::Vec3, prelude::Color};
 
 use crate::{
-    common::{components::pos::PosComponent, static_mesh::vertex::Vertex},
+    common::components::{pos::PosComponent, static_mesh::vertex::Vertex},
     plugins::chunk::components::ChunkComponent,
 };
 

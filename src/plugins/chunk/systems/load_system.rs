@@ -1,5 +1,5 @@
 use crate::{
-    common::{components::pos::PosComponent, static_mesh::StaticMeshComponent},
+    common::components::{pos::PosComponent, static_mesh::StaticMeshComponent},
     plugins::{
         chunk::{
             components::{

@@ -1,7 +1,7 @@
 use self::voxel::{voxels_to_vertex::append_vertex, Voxel};
 
 use crate::{
-    common::{components::pos::PosComponent, static_mesh::vertex::Vertex},
+    common::components::{pos::PosComponent, static_mesh::vertex::Vertex},
     plugins::generator::resources::GeneratorRes,
 };
 use bevy::prelude::*;
