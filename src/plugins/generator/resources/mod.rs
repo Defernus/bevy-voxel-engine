@@ -1,6 +1,7 @@
-use crate::plugins::chunk::components::voxel::Voxel;
 use bevy::{math::Vec3, prelude::Color};
 use noise::NoiseFn;
+
+use crate::plugins::chunk::resources::chunk::voxel::Voxel;
 
 #[derive(Clone)]
 pub struct GeneratorRes {

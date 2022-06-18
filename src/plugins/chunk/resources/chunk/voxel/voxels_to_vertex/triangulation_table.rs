@@ -1,4 +1,4 @@
-use crate::plugins::chunk::components::voxel::Voxel;
+use crate::plugins::chunk::resources::chunk::voxel::Voxel;
 
 pub const TABLE: [[isize; 16]; 256] = [
     [

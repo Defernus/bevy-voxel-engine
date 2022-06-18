@@ -493,6 +493,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_mod_raycast"
+version = "0.4.0"
+source = "git+https://github.com/aevyrie/bevy_mod_raycast?branch=main#0a5d1e3334285eaf85e97adc28b14cbb50ab1b48"
+dependencies = [
+ "bevy",
+]
+
+[[package]]
 name = "bevy_pbr"
 version = "0.8.0-dev"
 source = "git+https://github.com/bevyengine/bevy.git?branch=main#ab72c8368f542c516a494069752b369ba6c2d131"
@@ -3084,6 +3092,7 @@ name = "voxel-engine-bevy"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "bevy_mod_raycast",
  "crossbeam-channel",
  "noise",
 ]

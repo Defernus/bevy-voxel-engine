@@ -1,12 +1,25 @@
 use crate::plugins::player::components::PlayerComponent;
-use bevy::prelude::*;
+use bevy::{prelude::*, render::camera::Projection};
+use bevy_mod_raycast::RayCastSource;
+
+use crate::common::components::ray_let::RayLet;
 
 pub mod components;
 mod systems;
 pub struct PlayerPlugin;
 
 fn player_startup_system(mut commands: Commands) {
-    PlayerComponent::spawn(&mut commands);
+    commands
+        .spawn_bundle(Camera3dBundle {
+            transform: Transform::from_xyz(0., 0., 0.).looking_at(-Vec3::Z, Vec3::Y),
+            projection: Projection::Perspective(PerspectiveProjection {
+                fov: std::f32::consts::PI / 2.0,
+                ..default()
+            }),
+            ..default()
+        })
+        .insert(RayCastSource::<RayLet>::new_transform_empty())
+        .insert(PlayerComponent);
 }
 
 impl Plugin for PlayerPlugin {

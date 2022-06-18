@@ -3,10 +3,7 @@ use bevy::prelude::*;
 use crate::{
     common::components::pos::PosComponent,
     plugins::{
-        chunk::{
-            components::ChunkComponent,
-            resources::{ChunkUnloadingEnabled, InWorldChunks},
-        },
+        chunk::resources::{chunk::Chunk, ChunkUnloadingEnabled, InWorldChunk, InWorldChunks},
         player::components::PlayerComponent,
     },
 };
@@ -16,7 +13,6 @@ pub const MAX_RENDER_DISTANCE: usize = 7;
 pub fn unload_chunk_system(
     mut commands: Commands,
     mut in_world_chunks: ResMut<InWorldChunks>,
-    chunks_q: Query<(Entity, &PosComponent), With<ChunkComponent>>,
     player_transform_q: Query<&Transform, With<PlayerComponent>>,
     chunk_unload_enabled: Res<ChunkUnloadingEnabled>,
 ) {
@@ -25,16 +21,28 @@ pub fn unload_chunk_system(
     }
 
     let player_transform = player_transform_q.single();
-    let player_pos = ChunkComponent::get_chunk_pos_by_transform(player_transform);
+    let player_pos = Chunk::get_chunk_pos_by_transform(player_transform);
 
-    for (e, chunk_pos) in chunks_q.iter() {
-        let delta = player_pos - chunk_pos.clone();
-        if delta.x.abs().max(delta.y.abs()).max(delta.z.abs()) > MAX_RENDER_DISTANCE as i64 + 1 {
-            if !in_world_chunks.0.remove(&chunk_pos) {
-                panic!("failed to unload chunk: chunk position is not registered");
+    let mut chunks_to_remove: Vec<PosComponent> = vec![];
+    for (chunk_pos, chunk_data) in in_world_chunks.0.iter() {
+        match **chunk_data {
+            InWorldChunk::Loaded(_, e) => {
+                let delta = player_pos - chunk_pos.clone();
+                if delta.x.abs().max(delta.y.abs()).max(delta.z.abs())
+                    > MAX_RENDER_DISTANCE as i64 + 1
+                {
+                    commands.entity(e).despawn_recursive();
+                    chunks_to_remove.push(*chunk_pos);
+                }
             }
+            _ => {}
+        }
+    }
 
-            commands.entity(e).despawn_recursive();
+    for chunk_pos in chunks_to_remove {
+        match in_world_chunks.0.remove(&chunk_pos) {
+            Some(_) => {}
+            None => panic!("failed to unload chunk: chunk position is not registered"),
         }
     }
 }

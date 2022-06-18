@@ -2,7 +2,7 @@ use bevy::{math::Vec3, prelude::Color};
 
 use crate::{
     common::components::{pos::PosComponent, static_mesh::vertex::Vertex},
-    plugins::chunk::components::ChunkComponent,
+    plugins::chunk::resources::chunk::Chunk,
 };
 
 use self::triangulation_table::{get_index_by_voxels, TABLE};
@@ -113,7 +113,7 @@ fn get_base_nodes() -> [VertexNode; NODES_POS_COUNT] {
 type Nodes = [Voxel; NODES_POS_COUNT];
 type VoxelsBlock = [[[Voxel; 2]; 2]; 2];
 
-fn get_voxel(chunk: &ChunkComponent, pos: PosComponent) -> Voxel {
+fn get_voxel(chunk: &Chunk, pos: PosComponent) -> Voxel {
     match chunk.get_voxel(pos) {
         Some(voxel) => voxel,
         _ => Voxel {
@@ -123,7 +123,7 @@ fn get_voxel(chunk: &ChunkComponent, pos: PosComponent) -> Voxel {
     }
 }
 
-fn get_voxels_for_vertex(chunk: &ChunkComponent, base_pos: PosComponent) -> VoxelsBlock {
+fn get_voxels_for_vertex(chunk: &Chunk, base_pos: PosComponent) -> VoxelsBlock {
     let voxels: [[[Voxel; 2]; 2]; 2] = [
         [
             [
@@ -247,7 +247,7 @@ fn append_triangle(
     });
 }
 
-pub fn append_vertex(pos: PosComponent, chunk: &ChunkComponent, vertices: &mut Vec<Vertex>) {
+pub fn append_vertex(pos: PosComponent, chunk: &Chunk, vertices: &mut Vec<Vertex>) {
     let voxels = get_voxels_for_vertex(chunk, pos);
     let nodes = get_vertex_nodes(voxels);
 

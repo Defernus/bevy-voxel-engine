@@ -7,7 +7,10 @@ use crate::{
                 compute_chunk_generation::ComputeChunkGeneration,
                 ChunkComponent,
             },
-            resources::{ChunkLoadIterator, ChunkLoadingEnabled, InWorldChunks, PrevPlayerPos},
+            resources::{
+                chunk::Chunk, ChunkLoadIterator, ChunkLoadingEnabled, InWorldChunk, InWorldChunks,
+                PrevPlayerPos,
+            },
         },
         generator::resources::GeneratorRes,
         player::components::PlayerComponent,
@@ -34,16 +37,18 @@ fn generate_chunk(
     for _ in 0..CHUNKS_SPAWN_AT_ONCE {
         let mut pos = chunk_load_iter.0.next()?;
 
-        while in_world_chunks.0.contains(&pos) {
+        while in_world_chunks.0.contains_key(&pos) {
             pos = chunk_load_iter.0.next()?
         }
-        in_world_chunks.0.insert(pos);
+        in_world_chunks
+            .0
+            .insert(pos, Box::new(InWorldChunk::Loading));
 
         let (tx, rx) = unbounded();
 
         let gen = generator.clone();
         std::thread::spawn(move || {
-            let mut chunk = ChunkComponent::new(&gen, pos);
+            let mut chunk = Chunk::new(&gen, pos);
             let vertices = chunk.generate_vertices(pos);
 
             match tx.send((pos, Box::new(chunk), vertices)) {
@@ -75,7 +80,7 @@ pub fn chunk_load_system(
 
     let player_transform = player_transform_q.single();
 
-    let player_chunk_pos = ChunkComponent::get_chunk_pos_by_transform(player_transform);
+    let player_chunk_pos = Chunk::get_chunk_pos_by_transform(player_transform);
 
     if player_chunk_pos != prev_player_chunk_pos.0 {
         prev_player_chunk_pos.0 = player_chunk_pos;
@@ -95,6 +100,7 @@ pub fn chunk_load_system(
 }
 
 pub fn spawn_chunk_system(
+    mut in_world_chunks: ResMut<InWorldChunks>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
@@ -110,13 +116,17 @@ pub fn spawn_chunk_system(
                     vertices,
                 );
 
-                commands
+                let chunk_entity = commands
                     .spawn()
-                    .insert(*chunk)
+                    .insert(ChunkComponent)
                     .insert(pos)
                     .insert(ChunkStateComponent(ChunkState::NotInitialized))
-                    .add_child(mesh);
+                    .add_child(mesh)
+                    .id();
                 commands.entity(e).despawn();
+                in_world_chunks
+                    .0
+                    .insert(pos, Box::new(InWorldChunk::Loaded(*chunk, chunk_entity)));
             }
             _ => {}
         }

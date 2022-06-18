@@ -9,3 +9,4 @@ edition = "2021"
 bevy = { git = "https://github.com/bevyengine/bevy.git", branch = "main", features = ["dynamic"] }
 noise = "0.7.0"
 crossbeam-channel = "0.5.5"
+bevy_mod_raycast = { git = "https://github.com/aevyrie/bevy_mod_raycast", branch = "main" }

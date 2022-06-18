@@ -1,12 +1,22 @@
-use std::collections::BTreeSet;
+use bevy::prelude::*;
 
 use crate::common::components::pos::{PosComponent, PosComponentAroundIterator};
+use std::collections::BTreeMap;
 
-pub struct InWorldChunks(pub BTreeSet<PosComponent>);
+use self::chunk::Chunk;
+
+pub mod chunk;
+
+pub enum InWorldChunk {
+    Loaded(Chunk, Entity),
+    Loading,
+}
+
+pub struct InWorldChunks(pub BTreeMap<PosComponent, Box<InWorldChunk>>);
 
 impl InWorldChunks {
     pub fn new() -> Self {
-        Self(BTreeSet::new())
+        Self(BTreeMap::new())
     }
 }
 

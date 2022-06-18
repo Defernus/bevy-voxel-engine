@@ -1,7 +1,9 @@
+use self::vertex::Vertex;
 use bevy::render::mesh::{self, PrimitiveTopology};
 use bevy::{pbr::PbrBundle, prelude::*};
+use bevy_mod_raycast::RayCastMesh;
 
-use self::vertex::Vertex;
+use super::ray_let::RayLet;
 
 pub mod vertex;
 
@@ -11,8 +13,8 @@ pub struct StaticMeshComponent {}
 impl StaticMeshComponent {
     pub fn spawn(
         commands: &mut Commands,
-        meshes: &mut ResMut<Assets<Mesh>>,
-        materials: &mut ResMut<Assets<StandardMaterial>>,
+        meshes: &mut Assets<Mesh>,
+        materials: &mut Assets<StandardMaterial>,
         vertices: Vec<Vertex>,
     ) -> Entity {
         let mut indices_vec = Vec::new();
@@ -53,6 +55,7 @@ impl StaticMeshComponent {
                 ..default()
             })
             .insert(StaticMeshComponent {})
+            .insert(RayCastMesh::<RayLet>::default())
             .id();
     }
 }
