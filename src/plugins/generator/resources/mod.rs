@@ -47,7 +47,7 @@ impl GeneratorRes {
         return noise_v;
     }
 
-    fn randomize_color(&self, pos: Vec3, color: Color, factor: f64) -> Color {
+    pub fn randomize_color(&self, pos: Vec3, color: Color, factor: f64) -> Color {
         let dr = self.simplex.get([
             (pos.x as f64) / 2.3,
             (pos.y as f64) / 2.3,
@@ -82,7 +82,7 @@ impl GeneratorRes {
 
                     let level = self.get_level_val(pos);
 
-                    let mut color = Color::rgb(0.4, 0.4, 0.4);
+                    let mut color = Color::rgb(0.3, 0.3, 0.4);
 
                     if level < 0.03 * self.scale {
                         color = Color::rgb(0.2, 0.7, 0.3);
@@ -93,7 +93,7 @@ impl GeneratorRes {
                     noise_v = noise_v.min(level);
 
                     voxels[x + y * size + z * size * size] = Voxel {
-                        color: self.randomize_color(pos, color, 0.05),
+                        color: self.randomize_color(pos, color, 0.07),
                         value: noise_v.max(-0.1).min(1.) as f32,
                     };
                 }

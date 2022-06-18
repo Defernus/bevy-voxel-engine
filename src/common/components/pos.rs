@@ -17,6 +17,10 @@ impl PosComponent {
         Self { x, y, z }
     }
 
+    pub fn to_vec(&self) -> Vec3 {
+        Vec3::new(self.x as f32, self.y as f32, self.z as f32)
+    }
+
     pub fn mul_scalar(&self, val: i64) -> Self {
         PosComponent::new(self.x * val, self.y * val, self.z * val)
     }

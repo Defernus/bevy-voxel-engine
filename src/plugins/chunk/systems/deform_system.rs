@@ -3,20 +3,23 @@ use bevy_mod_raycast::Intersection;
 
 use crate::{
     common::components::{pos::PosComponent, ray_let::RayLet, static_mesh::StaticMeshComponent},
-    plugins::chunk::{
-        components::{
-            chunk_state::{ChunkState, ChunkStateComponent},
-            ChunkComponent,
+    plugins::{
+        chunk::{
+            components::{
+                chunk_state::{ChunkState, ChunkStateComponent},
+                ChunkComponent,
+            },
+            resources::{
+                chunk::{voxel::Voxel, Chunk},
+                InWorldChunk, InWorldChunks,
+            },
         },
-        resources::{
-            chunk::{voxel::Voxel, Chunk},
-            InWorldChunk, InWorldChunks,
-        },
+        generator::resources::GeneratorRes,
     },
 };
 
 const DEFORM_RADIUS: f32 = 8.;
-const DEFORM_SPEED: f32 = 0.05;
+const DEFORM_SPEED: f32 = 0.02;
 const MAX_DEFORM_DIST: f32 = 32.;
 
 enum DeformType {
@@ -25,6 +28,7 @@ enum DeformType {
 }
 
 fn deform_chunk(
+    generator: &GeneratorRes,
     intersection_query: &Query<&Intersection<RayLet>>,
     chunks: &mut InWorldChunks,
     commands: &mut Commands,
@@ -55,12 +59,16 @@ fn deform_chunk(
             InWorldChunk::Loaded(chunk, e) => {
                 let blocks_effected = match deform_type {
                     DeformType::Dig => chunk.dig(
-                        Chunk::pos_to_relative(chunk_pos, voxel_pos),
+                        generator,
+                        chunk_pos,
+                        voxel_pos,
                         DEFORM_RADIUS,
                         dt * DEFORM_SPEED,
                     ),
                     DeformType::Fill(voxel) => chunk.fill(
-                        Chunk::pos_to_relative(chunk_pos, voxel_pos),
+                        generator,
+                        chunk_pos,
+                        voxel_pos,
                         voxel,
                         DEFORM_RADIUS,
                         dt * DEFORM_SPEED,
@@ -90,6 +98,7 @@ fn deform_chunk(
 
 pub fn chunk_deform_system(
     intersection_query: Query<&Intersection<RayLet>>,
+    generator: Res<GeneratorRes>,
     mut chunks: ResMut<InWorldChunks>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -100,6 +109,7 @@ pub fn chunk_deform_system(
     let dt = time.delta_seconds_f64() as f32;
     if buttons.pressed(MouseButton::Left) {
         deform_chunk(
+            &generator,
             &intersection_query,
             &mut chunks,
             &mut commands,
@@ -111,6 +121,7 @@ pub fn chunk_deform_system(
     }
     if buttons.pressed(MouseButton::Right) {
         deform_chunk(
+            &generator,
             &intersection_query,
             &mut chunks,
             &mut commands,
@@ -118,7 +129,7 @@ pub fn chunk_deform_system(
             &mut materials,
             dt,
             DeformType::Fill(Voxel {
-                color: Color::rgb(1., 0., 0.),
+                color: Color::rgb(0.3, 0.3, 0.4),
                 value: 1.,
             }),
         );
