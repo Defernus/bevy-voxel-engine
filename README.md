@@ -1,3 +1,3 @@
-# Voxel engin written using [bevy](https://bevyengine.org/) engine
+# Voxel engine written using [bevy](https://bevyengine.org/)
 
 WIP
