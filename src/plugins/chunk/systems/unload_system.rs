@@ -1,11 +1,14 @@
 use bevy::prelude::*;
 
-use crate::plugins::{
-    chunk::{
-        components::{pos::PosComponent, ChunkComponent},
-        resources::{ChunkUnloadingEnabled, InWorldChunks},
+use crate::{
+    common::components::pos::PosComponent,
+    plugins::{
+        chunk::{
+            components::ChunkComponent,
+            resources::{ChunkUnloadingEnabled, InWorldChunks},
+        },
+        player::components::PlayerComponent,
     },
-    player::components::PlayerComponent,
 };
 
 pub const MAX_RENDER_DISTANCE: usize = 7;

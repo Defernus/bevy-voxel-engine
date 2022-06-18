@@ -3,14 +3,11 @@ use self::{
     voxel::{voxels_to_vertex::append_vertex, Voxel},
 };
 
-use crate::plugins::generator::resources::GeneratorRes;
+use crate::{common::components::pos::PosComponent, plugins::generator::resources::GeneratorRes};
 use bevy::prelude::*;
-
-use self::pos::PosComponent;
 
 pub mod chunk_state;
 pub mod compute_chunk_generation;
-pub mod pos;
 pub mod static_mesh;
 pub mod voxel;
 

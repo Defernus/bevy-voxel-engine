@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-use super::components::pos::{PosComponent, PosComponentAroundIterator};
+use crate::common::components::pos::{PosComponent, PosComponentAroundIterator};
 
 pub struct InWorldChunks(pub BTreeSet<PosComponent>);
 

@@ -1,16 +1,18 @@
-use crate::plugins::{
-    chunk::{
-        components::{
-            chunk_state::{ChunkState, ChunkStateComponent},
-            compute_chunk_generation::ComputeChunkGeneration,
-            pos::PosComponent,
-            static_mesh::StaticMeshComponent,
-            ChunkComponent,
+use crate::{
+    common::components::pos::PosComponent,
+    plugins::{
+        chunk::{
+            components::{
+                chunk_state::{ChunkState, ChunkStateComponent},
+                compute_chunk_generation::ComputeChunkGeneration,
+                static_mesh::StaticMeshComponent,
+                ChunkComponent,
+            },
+            resources::{ChunkLoadIterator, ChunkLoadingEnabled, InWorldChunks, PrevPlayerPos},
         },
-        resources::{ChunkLoadIterator, ChunkLoadingEnabled, InWorldChunks, PrevPlayerPos},
+        generator::resources::GeneratorRes,
+        player::components::PlayerComponent,
     },
-    generator::resources::GeneratorRes,
-    player::components::PlayerComponent,
 };
 use bevy::prelude::*;
 use crossbeam_channel::unbounded;

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use self::components::pos::PosComponent;
+use crate::common::components::pos::PosComponent;
+
 use self::resources::{
     ChunkLoadIterator, ChunkLoadingEnabled, ChunkUnloadingEnabled, InWorldChunks, PrevPlayerPos,
 };
