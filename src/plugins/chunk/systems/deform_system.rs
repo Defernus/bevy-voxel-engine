@@ -8,21 +8,30 @@ use crate::{
             chunk_state::{ChunkState, ChunkStateComponent},
             ChunkComponent,
         },
-        resources::{chunk::Chunk, InWorldChunk, InWorldChunks},
+        resources::{
+            chunk::{voxel::Voxel, Chunk},
+            InWorldChunk, InWorldChunks,
+        },
     },
 };
 
-const DIG_RADIUS: f32 = 4.;
-const DIG_SPEED: f32 = 0.01;
-const MAX_DIG_DIST: f32 = 10.;
+const DEFORM_RADIUS: f32 = 8.;
+const DEFORM_SPEED: f32 = 0.05;
+const MAX_DEFORM_DIST: f32 = 32.;
 
-fn dig(
+enum DeformType {
+    Dig,
+    Fill(Voxel),
+}
+
+fn deform_chunk(
     intersection_query: &Query<&Intersection<RayLet>>,
     chunks: &mut InWorldChunks,
     commands: &mut Commands,
     meshes: &mut Assets<Mesh>,
     materials: &mut Assets<StandardMaterial>,
     dt: f32,
+    deform_type: DeformType,
 ) -> Option<()> {
     let intersection_res = intersection_query.get_single();
 
@@ -33,7 +42,7 @@ fn dig(
 
     let pos = intersection.position()?;
     let dist = intersection.distance()?;
-    if dist > MAX_DIG_DIST {
+    if dist > MAX_DEFORM_DIST {
         return None;
     }
 
@@ -44,11 +53,19 @@ fn dig(
         // !TODO generate chunk if not generated yet to prevent gaps formations on chunks edges
         match chunks.0.get_mut(&chunk_pos)?.as_mut() {
             InWorldChunk::Loaded(chunk, e) => {
-                let blocks_effected = chunk.dig(
-                    Chunk::pos_to_relative(chunk_pos, voxel_pos),
-                    DIG_RADIUS,
-                    dt * DIG_SPEED,
-                );
+                let blocks_effected = match deform_type {
+                    DeformType::Dig => chunk.dig(
+                        Chunk::pos_to_relative(chunk_pos, voxel_pos),
+                        DEFORM_RADIUS,
+                        dt * DEFORM_SPEED,
+                    ),
+                    DeformType::Fill(voxel) => chunk.fill(
+                        Chunk::pos_to_relative(chunk_pos, voxel_pos),
+                        voxel,
+                        DEFORM_RADIUS,
+                        dt * DEFORM_SPEED,
+                    ),
+                };
                 if blocks_effected == 0 {
                     continue;
                 }
@@ -71,7 +88,7 @@ fn dig(
     Some(())
 }
 
-pub fn chunk_dig_system(
+pub fn chunk_deform_system(
     intersection_query: Query<&Intersection<RayLet>>,
     mut chunks: ResMut<InWorldChunks>,
     mut commands: Commands,
@@ -80,15 +97,30 @@ pub fn chunk_dig_system(
     time: Res<Time>,
     buttons: Res<Input<MouseButton>>,
 ) {
+    let dt = time.delta_seconds_f64() as f32;
     if buttons.pressed(MouseButton::Left) {
-        let dt = time.delta_seconds_f64() as f32;
-        dig(
+        deform_chunk(
             &intersection_query,
             &mut chunks,
             &mut commands,
             &mut meshes,
             &mut materials,
             dt,
+            DeformType::Dig,
+        );
+    }
+    if buttons.pressed(MouseButton::Right) {
+        deform_chunk(
+            &intersection_query,
+            &mut chunks,
+            &mut commands,
+            &mut meshes,
+            &mut materials,
+            dt,
+            DeformType::Fill(Voxel {
+                color: Color::rgb(1., 0., 0.),
+                value: 1.,
+            }),
         );
     }
 }

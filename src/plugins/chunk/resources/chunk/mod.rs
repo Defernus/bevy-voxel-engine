@@ -144,11 +144,37 @@ impl Chunk {
             let delta_vec = Vec3::new(delta_pos.x as f32, delta_pos.y as f32, delta_pos.z as f32);
             let l = delta_vec.length();
 
-            if l < radius && self.voxels[i].value >= 0. {
+            if l < radius {
                 count += 1;
-                // self.voxels[i].color = Color::rgb(1., 0., 0.);
                 self.voxels[i].value -= value * (radius - l) / radius / (self.voxels[i].value + 1.);
-                self.voxels[i].value = self.voxels[i].value.max(-0.1);
+                self.voxels[i].value = self.voxels[i].value.max(-0.001);
+            }
+        }
+
+        return count;
+    }
+
+    pub fn fill(
+        &mut self,
+        relative_pos: PosComponent,
+        voxel: Voxel,
+        radius: f32,
+        value: f32,
+    ) -> usize {
+        let mut count: usize = 0;
+
+        for i in 0..CHUNK_VOXELS_VOLUME {
+            let delta_pos = relative_pos - Self::index_to_pos(i);
+
+            let delta_vec = Vec3::new(delta_pos.x as f32, delta_pos.y as f32, delta_pos.z as f32);
+            let l = delta_vec.length();
+
+            if l < radius && self.voxels[i].value <= 0. {
+                count += 1;
+                self.voxels[i].color = voxel.color;
+                self.voxels[i].value = self.voxels[i].value.max(-0.001);
+                self.voxels[i].value += value * (radius - l) / radius / (self.voxels[i].value + 1.);
+                self.voxels[i].value = self.voxels[i].value.min(1.);
             }
         }
 
