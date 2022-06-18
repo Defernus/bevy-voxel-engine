@@ -73,6 +73,7 @@ impl GeneratorRes {
     pub fn generate_voxels(&self, offset: Vec3, voxels: &mut [Voxel], size: usize) {
         for x in 0..size {
             for z in 0..size {
+                // !TODO optimize generator by moving 2d noise to here
                 for y in 0..size {
                     let pos = Vec3::new(
                         offset.x + x as f32,
