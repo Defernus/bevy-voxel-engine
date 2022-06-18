@@ -46,9 +46,16 @@ fn deform_chunk(
     if dist > MAX_DEFORM_DIST {
         return None;
     }
+    match deform_type {
+        DeformType::Fill(_) => {
+            if dist < DEFORM_RADIUS / 2. {
+                return None;
+            }
+        }
+        _ => {}
+    }
 
     let voxel_pos = PosComponent::new(pos.x as i64, pos.y as i64, pos.z as i64);
-    println!("dig at {:?}", voxel_pos);
 
     for chunk_pos in Chunk::get_chunk_pos_by_vec(*pos).iter_neighbors(true) {
         // !TODO generate chunk if not generated yet to prevent gaps formations on chunks edges
