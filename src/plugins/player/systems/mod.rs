@@ -1,6 +1,7 @@
 use crate::plugins::player::components::PlayerComponent;
 use bevy::prelude::*;
 
+pub mod control_system;
 pub mod move_system;
 pub mod rotate_system;
 
@@ -11,7 +12,7 @@ pub fn player_startup_system(
 ) {
     commands
         .spawn()
-        .insert(PlayerComponent)
+        .insert(PlayerComponent::default())
         .insert_bundle(PbrBundle {
             transform: Transform::from_xyz(0., 0., 0.).looking_at(-Vec3::Z, Vec3::Y),
             mesh: meshes.add(Mesh::from(shape::Box::new(1., 1., 1.))),
