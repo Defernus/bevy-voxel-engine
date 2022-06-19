@@ -17,6 +17,24 @@ impl StaticMeshComponent {
         materials: &mut Assets<StandardMaterial>,
         vertices: Vec<Vertex>,
     ) -> Entity {
+        return commands
+            .spawn_bundle(PbrBundle {
+                mesh: meshes.add(Self::generate_mesh(vertices)),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::rgb(1.0, 1.0, 1.0).into(),
+                    perceptual_roughness: 1.,
+                    metallic: 0.,
+                    reflectance: 0.,
+
+                    ..default()
+                }),
+                ..default()
+            })
+            .insert(StaticMeshComponent)
+            .id();
+    }
+
+    pub fn generate_mesh(vertices: Vec<Vertex>) -> Mesh {
         let mut indices_vec = Vec::new();
 
         let mut positions: Vec<[f32; 3]> = Vec::new();
@@ -41,21 +59,6 @@ impl StaticMeshComponent {
         mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
         mesh.insert_attribute(Mesh::ATTRIBUTE_COLOR, colors);
 
-        return commands
-            .spawn_bundle(PbrBundle {
-                mesh: meshes.add(mesh),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::rgb(1.0, 1.0, 1.0).into(),
-                    perceptual_roughness: 1.,
-                    metallic: 0.,
-                    reflectance: 0.,
-
-                    ..default()
-                }),
-                ..default()
-            })
-            .insert(StaticMeshComponent)
-            .insert(RayCastMesh::<RayLet>::default())
-            .id();
+        mesh
     }
 }

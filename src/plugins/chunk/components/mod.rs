@@ -1,8 +1,10 @@
 use crate::common::components::{
     pos::PosComponent,
+    ray_let::RayLet,
     static_mesh::{vertex::Vertex, StaticMeshComponent},
 };
 use bevy::prelude::*;
+use bevy_mod_raycast::RayCastMesh;
 
 use self::chunk_state::{ChunkState, ChunkStateComponent};
 
@@ -20,6 +22,9 @@ pub fn spawn_chunk_component(
     chunk_pos: PosComponent,
 ) -> Entity {
     let mesh = StaticMeshComponent::spawn(commands, meshes, materials, vertices);
+    commands
+        .entity(mesh)
+        .insert(RayCastMesh::<RayLet>::default());
     commands
         .spawn()
         .insert(ChunkComponent)
