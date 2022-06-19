@@ -2,7 +2,9 @@ use crate::{
     common::components::static_mesh::{vertex::Vertex, StaticMeshComponent},
     plugins::player::components::PlayerComponent,
 };
-use bevy::prelude::*;
+use bevy::{pbr::NotShadowCaster, prelude::*};
+
+use super::components::PlayerLightComponent;
 
 pub mod control_system;
 pub mod move_system;
@@ -37,7 +39,29 @@ pub fn player_startup_system(
         .insert_bundle(PbrBundle {
             transform: Transform::from_xyz(0., 0., 0.).looking_at(-Vec3::Z, Vec3::Y),
             mesh: meshes.add(mesh),
-            material: materials.add(Color::rgb(1., 1., 1.).into()),
+            material: materials.add(StandardMaterial {
+                base_color: Color::rgb(1., 1., 1.).into(),
+                perceptual_roughness: 1.,
+                metallic: 0.,
+                reflectance: 0.,
+                ..Default::default()
+            }),
+            ..default()
+        })
+        .insert(NotShadowCaster);
+
+    commands
+        .spawn()
+        .insert(PlayerLightComponent)
+        .insert_bundle(PointLightBundle {
+            transform: Transform::default(),
+            point_light: PointLight {
+                intensity: 2000.,
+                range: 500.,
+                color: Color::rgb(1., 0.9, 0.7),
+                shadows_enabled: true,
+                ..default()
+            },
             ..default()
         });
 }

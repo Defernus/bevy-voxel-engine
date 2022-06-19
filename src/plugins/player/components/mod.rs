@@ -14,3 +14,6 @@ impl Default for PlayerComponent {
         }
     }
 }
+
+#[derive(Component)]
+pub struct PlayerLightComponent;
