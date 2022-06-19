@@ -66,7 +66,7 @@ impl GeneratorRes {
 
     fn get_cylinder_val(&self, pos: Vec3) -> f32 {
         let r = 0.8 + self.get_norm_noise(pos.z * 0.1) * 0.6;
-        let z = pos.z / 2.;
+        let z = pos.z / 2. + self.get_noise(pos.z / 4.);
 
         let x_shift = self.get_noise(pos.z * 0.05) * 5.;
         let shifted_pos = Vec2::new(pos.x * 0.5 + x_shift, (pos.y + z) * 2.);
@@ -117,8 +117,8 @@ impl GeneratorRes {
                     noise_v += self.get_cylinder_val(pos);
                     noise_v += stalactites_val;
 
-                    if stalactites_val < 0.1 {
-                        color = Color::rgb(0.3, 0.3 + moss_val * 0.7, 0.4);
+                    if stalactites_val < 0.1 && noise_v < 0.1 {
+                        color = Color::rgb(0.3, 0.3 + moss_val * 0.3, 0.4 + moss_val * 0.6);
                     }
 
                     noise_v /= 100.;
