@@ -90,10 +90,21 @@ impl GeneratorRes {
         val
     }
 
+    fn get_moss_area(&self, pos: Vec2) -> f32 {
+        let layers_count = 2.;
+        let big_areas = self.get_noise2(pos * 0.1) / layers_count;
+        let small_areas = self.get_noise2(pos * 10.) / layers_count;
+
+        (big_areas + small_areas).max(0.)
+    }
+
     pub fn generate_voxels(&self, offset: Vec3, voxels: &mut [Voxel], size: usize) {
         for x in 0..size {
             for z in 0..size {
-                // !TODO optimize generator by moving 2d noise to here
+                let pos2 = Vec2::new(offset.x + x as f32, offset.z + z as f32) * self.scale;
+                let stalactites_val = self.get_stalactites_val(pos2);
+                let moss_val = self.get_moss_area(pos2);
+
                 for y in 0..size {
                     let pos = Vec3::new(
                         offset.x + x as f32,
@@ -101,11 +112,15 @@ impl GeneratorRes {
                         offset.z + z as f32,
                     ) * self.scale;
 
-                    let color = Color::rgb(0.3, 0.3, 0.4);
+                    let mut color = Color::rgb(0.3, 0.3, 0.4);
 
                     let mut noise_v = self.get_cliffs_val(pos);
                     noise_v += self.get_cylinder_val(pos);
-                    noise_v += self.get_stalactites_val(Vec2::new(pos.x, pos.z));
+                    noise_v += stalactites_val;
+
+                    if stalactites_val < 0.1 {
+                        color = Color::rgb(0.3, 0.3 + moss_val * 0.7, 0.4);
+                    }
 
                     noise_v /= 100.;
                     noise_v = noise_v.min(0.1);
