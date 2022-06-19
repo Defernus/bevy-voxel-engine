@@ -65,7 +65,7 @@ impl GeneratorRes {
     }
 
     fn get_cylinder_val(&self, pos: Vec3) -> f32 {
-        let r = 1. + self.get_norm_noise(pos.z * 0.1);
+        let r = 0.7 + self.get_norm_noise(pos.z * 0.1) * 0.6;
         let z = pos.z / 4.;
 
         let x_shift = self.get_noise(pos.z * 0.05) * 5.;

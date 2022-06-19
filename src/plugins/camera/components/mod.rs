@@ -4,6 +4,6 @@ use bevy::prelude::*;
 pub struct CameraComponent;
 
 pub fn update_camera_transform(player: Transform, camera: &mut Transform) {
-    camera.translation = player.translation + player.back() * 5. + player.up() * 2.;
+    camera.translation = player.translation + player.back() * 2. + player.up() * 0.4;
     *camera = camera.looking_at(player.translation, player.up());
 }
