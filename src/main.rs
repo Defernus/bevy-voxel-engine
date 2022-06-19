@@ -14,7 +14,7 @@ fn main() {
             present_mode: PresentMode::Mailbox,
             ..Default::default()
         })
-        .insert_resource(ClearColor(Color::rgb(0.4, 0.9, 1.)))
+        .insert_resource(ClearColor(Color::rgb(0.2, 0.2, 0.25)))
         .add_plugins(DefaultPlugins)
         .add_plugin(DefaultRaycastingPlugin::<RayLet>::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default())

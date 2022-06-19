@@ -9,86 +9,85 @@ use crate::plugins::chunk::resources::chunk::voxel::Voxel;
 #[derive(Clone)]
 pub struct GeneratorRes {
     simplex: noise::OpenSimplex,
-    scale: f64,
-    noise_threshold: f64,
+    perlin: noise::Perlin,
+    scale: f32,
+    noise_threshold: f32,
 }
 
 impl GeneratorRes {
-    fn get_float_scale(&self, pos: Vec2) -> f64 {
-        let result = self.simplex.get([
-            (pos.x as f64) * 0.1 * self.scale,
-            (pos.y as f64) * 0.1 * self.scale,
-        ]);
-
-        let result = 1. + result * 0.25;
-
-        return result;
-    }
-    fn get_level_val(&self, pos: Vec3) -> f64 {
-        let noise_float_scale = self.get_float_scale(Vec2::new(pos.x, pos.z));
-
-        let main_level = (self.simplex.get([
-            (pos.x as f64) * noise_float_scale as f64 * 0.456 * self.scale,
-            (pos.z as f64) * noise_float_scale as f64 * 0.456 * self.scale,
-        ]) + 1.)
-            / 2.;
-
-        let small_noise = self.simplex.get([
-            pos.x as f64 * self.scale * 10.,
-            pos.z as f64 * self.scale * 10.,
-        ]) * 0.01
-            + 1.;
-
-        let mut noise_v: f64 = (pos.y as f64) + main_level * 20. * small_noise;
-
-        noise_v += pos.length() as f64 / 2.;
-        noise_v /= 100. / self.scale;
-
-        return -noise_v;
+    pub fn get_noise(&self, pos: f32) -> f32 {
+        self.perlin.get([pos as f64, 0.]) as f32
     }
 
-    fn get_cliffs_val(&self, pos: Vec3) -> f64 {
-        let mut noise_v = self.simplex.get([
-            (pos.x as f64) * self.scale,
-            (pos.y as f64) * self.scale,
-            (pos.z as f64) * self.scale,
-        ]);
-        noise_v += 1.0;
-        noise_v /= 2.0;
-
-        noise_v -= (self.simplex.get([
-            (pos.x as f64) * 0.156 * self.scale,
-            (pos.y as f64) * 0.156 * self.scale,
-            (pos.z as f64) * 0.156 * self.scale,
-        ]) + 1.)
-            / 2.
-            * self.noise_threshold;
-        noise_v *= 10. * self.scale;
-
-        return noise_v;
+    pub fn get_norm_noise(&self, pos: f32) -> f32 {
+        (self.get_noise(pos) + 1.) / 2.
     }
 
-    pub fn randomize_color(&self, pos: Vec3, color: Color, factor: f64) -> Color {
-        let dr = self.simplex.get([
-            (pos.x as f64) / 2.3,
-            (pos.y as f64) / 2.3,
-            (pos.z as f64) / 2.3,
-        ]) * factor;
-        let dg = self.simplex.get([
-            -(pos.x as f64) / 2.3,
-            (pos.y as f64) / 2.3,
-            (pos.z as f64) / 2.3,
-        ]) * factor;
-        let db = self.simplex.get([
-            (pos.x as f64) / 2.3,
-            -(pos.y as f64) / 2.3,
-            (pos.z as f64) / 2.3,
-        ]) * factor;
+    pub fn get_noise2(&self, pos: Vec2) -> f32 {
+        self.simplex.get([pos.x as f64, pos.y as f64]) as f32
+    }
+
+    pub fn get_norm_noise2(&self, pos: Vec2) -> f32 {
+        (self.get_noise2(pos) + 1.) / 2.
+    }
+
+    pub fn get_noise3(&self, pos: Vec3) -> f32 {
+        self.simplex.get([pos.x as f64, pos.y as f64, pos.z as f64]) as f32
+    }
+
+    pub fn get_norm_noise3(&self, pos: Vec3) -> f32 {
+        (self.get_noise3(pos) + 1.) / 2.
+    }
+
+    pub fn randomize_color(&self, pos: Vec3, color: Color, factor: f32) -> Color {
+        let pos = pos * self.scale;
+
+        let dr = self.get_noise3(pos / 2.4) * factor;
+        let dg = self.get_noise3(pos / 2.4 * Vec3::new(-1., 1., 1.)) * factor;
+        let db = self.get_noise3(pos / 2.4 * Vec3::new(1., -1., 1.)) * factor;
+
         Color::rgb(
-            (color.r() + color.r() * dr as f32).max(0.).min(1.),
-            (color.g() + color.g() * dg as f32).max(0.).min(1.),
-            (color.b() + color.b() * db as f32).max(0.).min(1.),
+            (color.r() + color.r() * dr).max(0.).min(1.),
+            (color.g() + color.g() * dg).max(0.).min(1.),
+            (color.b() + color.b() * db).max(0.).min(1.),
         )
+    }
+
+    fn get_cliffs_val(&self, pos: Vec3) -> f32 {
+        let mut val = self.get_noise3(pos);
+
+        val -= self.get_noise3(pos * 0.156) * self.noise_threshold;
+        val *= 0.7;
+
+        val = val.min(1.);
+
+        val
+    }
+
+    fn get_cylinder_val(&self, pos: Vec3) -> f32 {
+        let r = 1. + self.get_norm_noise(pos.z * 0.1);
+        let z = pos.z / 4.;
+
+        let x_shift = self.get_noise(pos.z * 0.05) * 5.;
+        let shifted_pos = Vec2::new(pos.x * 0.5 + x_shift, (pos.y + z) * 2.);
+        let mut val = (shifted_pos / r).length() - r;
+
+        val *= 1.5;
+        val = val.min(1.);
+
+        val
+    }
+
+    fn get_stalactites_val(&self, pos: Vec2) -> f32 {
+        let mut density = self.get_norm_noise2(pos * 2.);
+        density *= density;
+
+        let mut val = self.get_norm_noise2(pos * 10.) * density;
+        val *= val * 10.;
+
+        val = val.min(1.);
+
+        val
     }
 
     pub fn generate_voxels(&self, offset: Vec3, voxels: &mut [Voxel], size: usize) {
@@ -100,23 +99,20 @@ impl GeneratorRes {
                         offset.x + x as f32,
                         offset.y + y as f32,
                         offset.z + z as f32,
-                    );
+                    ) * self.scale;
 
-                    let level = self.get_level_val(pos);
-
-                    let mut color = Color::rgb(0.3, 0.3, 0.4);
-
-                    if level < 0.03 * self.scale {
-                        color = Color::rgb(1., 1., 1.);
-                    }
+                    let color = Color::rgb(0.3, 0.3, 0.4);
 
                     let mut noise_v = self.get_cliffs_val(pos);
+                    noise_v += self.get_cylinder_val(pos);
+                    noise_v += self.get_stalactites_val(Vec2::new(pos.x, pos.z));
 
-                    noise_v = noise_v.min(level);
+                    noise_v /= 100.;
+                    noise_v = noise_v.min(0.1);
 
                     voxels[x + y * size + z * size * size] = Voxel {
                         color: self.randomize_color(pos, color, 0.2),
-                        value: noise_v.max(-0.1).min(1.) as f32,
+                        value: noise_v as f32,
                     };
                 }
             }
@@ -127,9 +123,10 @@ impl GeneratorRes {
 impl Default for GeneratorRes {
     fn default() -> Self {
         Self {
-            simplex: noise::OpenSimplex::new(),
             scale: 0.1,
             noise_threshold: 0.7,
+            perlin: noise::Perlin::default(),
+            simplex: noise::OpenSimplex::default(),
         }
     }
 }
