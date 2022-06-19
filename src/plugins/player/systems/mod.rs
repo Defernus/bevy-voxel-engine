@@ -37,7 +37,7 @@ pub fn player_startup_system(
         .insert_bundle(PbrBundle {
             transform: Transform::from_xyz(0., 0., 0.).looking_at(-Vec3::Z, Vec3::Y),
             mesh: meshes.add(mesh),
-            material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
+            material: materials.add(Color::rgb(1., 1., 1.).into()),
             ..default()
         });
 }

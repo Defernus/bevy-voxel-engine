@@ -1,9 +1,6 @@
 use self::vertex::Vertex;
 use bevy::render::mesh::{self, PrimitiveTopology};
 use bevy::{pbr::PbrBundle, prelude::*};
-use bevy_mod_raycast::RayCastMesh;
-
-use super::ray_let::RayLet;
 
 pub mod vertex;
 
@@ -25,7 +22,6 @@ impl StaticMeshComponent {
                     perceptual_roughness: 1.,
                     metallic: 0.,
                     reflectance: 0.,
-
                     ..default()
                 }),
                 ..default()

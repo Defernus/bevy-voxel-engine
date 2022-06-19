@@ -9,7 +9,7 @@ pub struct PlayerComponent {
 impl Default for PlayerComponent {
     fn default() -> Self {
         Self {
-            noclip: false,
+            noclip: true,
             speed: -Vec3::Z,
         }
     }
