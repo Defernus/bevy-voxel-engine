@@ -91,11 +91,10 @@ impl GeneratorRes {
     }
 
     fn get_moss_area(&self, pos: Vec2) -> f32 {
-        let layers_count = 2.;
-        let big_areas = self.get_noise2(pos * 0.1) / layers_count;
-        let small_areas = self.get_noise2(pos * 10.) / layers_count;
+        let big_areas = self.get_noise2(pos * 0.1);
+        let small_areas = self.get_noise2(pos * 10.);
 
-        (big_areas + small_areas).max(0.)
+        (big_areas + small_areas).max(0.).min(1.)
     }
 
     pub fn generate_voxels(&self, offset: Vec3, voxels: &mut [Voxel], size: usize) {
