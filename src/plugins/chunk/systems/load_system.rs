@@ -16,7 +16,7 @@ use bevy::prelude::*;
 use crossbeam_channel::unbounded;
 
 pub const DEFAULT_RADIUS: usize = 5;
-pub const CHUNKS_SPAWN_AT_ONCE: usize = 4;
+pub const CHUNKS_SPAWN_AT_ONCE: usize = 6;
 
 impl ChunkLoadIterator {
     pub fn new(pos: PosComponent) -> Self {
