@@ -4,46 +4,43 @@ use crate::plugins::generator::resources::noise_generator::NoiseGenerator;
 
 use super::BiomeGenerator;
 
+#[derive(Default)]
 pub struct Cave2dLayer {
     stalactites_val: f32,
     moss_val: f32,
 }
 
-pub struct CaveBiomeGenerator;
+pub struct CaveBiomeGenerator {
+    layer2d: Cave2dLayer,
+}
 
-impl BiomeGenerator<Cave2dLayer> for CaveBiomeGenerator {
-    fn get_2d_layer(&self, generator: &NoiseGenerator, pos: Vec2) -> Cave2dLayer {
+impl BiomeGenerator for CaveBiomeGenerator {
+    fn update_2d_layer(&mut self, generator: &NoiseGenerator, pos: Vec2) {
         let stalactites_val = self.get_stalactites_val(&generator, pos);
         let moss_val = self.get_moss_area(&generator, pos);
-        Cave2dLayer {
+        self.layer2d = Cave2dLayer {
             stalactites_val,
             moss_val,
-        }
+        };
     }
 
-    fn get_voxel_color(
-        &self,
-        _generator: &NoiseGenerator,
-        layer2d: &Cave2dLayer,
-        _pos: Vec3,
-        value: f32,
-    ) -> Color {
+    fn get_voxel_color(&self, _generator: &NoiseGenerator, _pos: Vec3, value: f32) -> Color {
         let mut color = Color::rgb(0.3, 0.3, 0.4);
-        if layer2d.stalactites_val < 0.1 && value < 0.001 {
+        if self.layer2d.stalactites_val < 0.1 && value < 0.001 {
             color = Color::rgb(
                 0.3,
-                0.3 + layer2d.moss_val * 0.3,
-                0.4 + layer2d.moss_val * 0.6,
+                0.3 + self.layer2d.moss_val * 0.3,
+                0.4 + self.layer2d.moss_val * 0.6,
             );
         }
 
         color
     }
 
-    fn get_voxel_value(&self, generator: &NoiseGenerator, layer2d: &Cave2dLayer, pos: Vec3) -> f32 {
+    fn get_voxel_value(&self, generator: &NoiseGenerator, pos: Vec3) -> f32 {
         let mut noise_v = self.get_cliffs_val(&generator, pos);
         noise_v += self.get_cylinder_val(&generator, pos);
-        noise_v += layer2d.stalactites_val;
+        noise_v += self.layer2d.stalactites_val;
         noise_v /= 100.;
         noise_v = noise_v.min(0.1);
 
@@ -53,7 +50,9 @@ impl BiomeGenerator<Cave2dLayer> for CaveBiomeGenerator {
 
 impl CaveBiomeGenerator {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            layer2d: Cave2dLayer::default(),
+        }
     }
 
     fn get_cliffs_val(&self, generator: &NoiseGenerator, pos: Vec3) -> f32 {
@@ -69,10 +68,9 @@ impl CaveBiomeGenerator {
 
     fn get_cylinder_val(&self, generator: &NoiseGenerator, pos: Vec3) -> f32 {
         let r = 0.8 + generator.get_norm_noise(pos.z * 0.1) * 0.6;
-        let z = pos.z / 2. + generator.get_noise(pos.z / 4.);
 
         let x_shift = generator.get_noise(pos.z * 0.05) * 5.;
-        let shifted_pos = Vec2::new(pos.x * 0.5 + x_shift, (pos.y + z) * 2.);
+        let shifted_pos = Vec2::new(pos.x * 0.5 + x_shift, pos.y * 2.);
         let mut val = (shifted_pos / r).length() - r;
 
         val *= 1.5;

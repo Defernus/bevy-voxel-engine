@@ -7,19 +7,17 @@ use noise::NoiseFn;
 #[derive(Clone)]
 pub struct NoiseGenerator {
     simplex: noise::OpenSimplex,
-    perlin: noise::Perlin,
 }
 
 impl NoiseGenerator {
     pub fn new() -> Self {
         Self {
-            perlin: noise::Perlin::default(),
             simplex: noise::OpenSimplex::default(),
         }
     }
 
     pub fn get_noise(&self, pos: f32) -> f32 {
-        self.perlin.get([pos as f64, 0.]) as f32
+        self.simplex.get([pos as f64, 0.]) as f32
     }
 
     pub fn get_norm_noise(&self, pos: f32) -> f32 {

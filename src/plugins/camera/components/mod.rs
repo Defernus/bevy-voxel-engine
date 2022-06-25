@@ -1,7 +1,5 @@
 use bevy::prelude::*;
 
-pub mod post_processing_material;
-
 #[derive(Component)]
 pub struct CameraComponent;
 
