@@ -43,6 +43,7 @@ fn generate_chunk(
         let (tx, rx) = unbounded();
 
         let gen = generator.clone();
+
         std::thread::spawn(move || {
             let mut chunk = Chunk::new(&gen, pos);
             let vertices = chunk.generate_vertices(pos);

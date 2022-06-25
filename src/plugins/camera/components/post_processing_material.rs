@@ -10,7 +10,6 @@ use bevy::{
             SamplerBindingType, ShaderStages, TextureSampleType, TextureViewDimension,
         },
         renderer::RenderDevice,
-        view::ViewDepthTexture,
     },
     sprite::{Material2d, Material2dPipeline},
 };

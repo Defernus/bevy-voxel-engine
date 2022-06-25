@@ -1,6 +1,6 @@
 use bevy::{math::Vec3, prelude::*};
 
-use crate::plugins::generator::resources::GeneratorRes;
+use crate::plugins::generator::resources::noise_generator::NoiseGenerator;
 
 use super::BiomeGenerator;
 
@@ -12,7 +12,7 @@ pub struct Cave2dLayer {
 pub struct CaveBiomeGenerator;
 
 impl BiomeGenerator<Cave2dLayer> for CaveBiomeGenerator {
-    fn get_2d_layer(&self, generator: GeneratorRes, pos: Vec2) -> Cave2dLayer {
+    fn get_2d_layer(&self, generator: &NoiseGenerator, pos: Vec2) -> Cave2dLayer {
         let stalactites_val = self.get_stalactites_val(&generator, pos);
         let moss_val = self.get_moss_area(&generator, pos);
         Cave2dLayer {
@@ -23,9 +23,9 @@ impl BiomeGenerator<Cave2dLayer> for CaveBiomeGenerator {
 
     fn get_voxel_color(
         &self,
-        generator: GeneratorRes,
+        _generator: &NoiseGenerator,
         layer2d: &Cave2dLayer,
-        pos: Vec3,
+        _pos: Vec3,
         value: f32,
     ) -> Color {
         let mut color = Color::rgb(0.3, 0.3, 0.4);
@@ -40,7 +40,7 @@ impl BiomeGenerator<Cave2dLayer> for CaveBiomeGenerator {
         color
     }
 
-    fn get_voxel_value(&self, generator: GeneratorRes, layer2d: &Cave2dLayer, pos: Vec3) -> f32 {
+    fn get_voxel_value(&self, generator: &NoiseGenerator, layer2d: &Cave2dLayer, pos: Vec3) -> f32 {
         let mut noise_v = self.get_cliffs_val(&generator, pos);
         noise_v += self.get_cylinder_val(&generator, pos);
         noise_v += layer2d.stalactites_val;
@@ -56,7 +56,7 @@ impl CaveBiomeGenerator {
         Self {}
     }
 
-    fn get_cliffs_val(&self, generator: &GeneratorRes, pos: Vec3) -> f32 {
+    fn get_cliffs_val(&self, generator: &NoiseGenerator, pos: Vec3) -> f32 {
         let mut val = generator.get_noise3(pos);
 
         val -= generator.get_noise3(pos * 0.156) * 0.7;
@@ -67,7 +67,7 @@ impl CaveBiomeGenerator {
         val
     }
 
-    fn get_cylinder_val(&self, generator: &GeneratorRes, pos: Vec3) -> f32 {
+    fn get_cylinder_val(&self, generator: &NoiseGenerator, pos: Vec3) -> f32 {
         let r = 0.8 + generator.get_norm_noise(pos.z * 0.1) * 0.6;
         let z = pos.z / 2. + generator.get_noise(pos.z / 4.);
 
@@ -81,7 +81,7 @@ impl CaveBiomeGenerator {
         val
     }
 
-    fn get_stalactites_val(&self, generator: &GeneratorRes, pos: Vec2) -> f32 {
+    fn get_stalactites_val(&self, generator: &NoiseGenerator, pos: Vec2) -> f32 {
         let mut density = generator.get_norm_noise2(pos * 2.);
         density *= density;
 
@@ -93,7 +93,7 @@ impl CaveBiomeGenerator {
         val
     }
 
-    fn get_moss_area(&self, generator: &GeneratorRes, pos: Vec2) -> f32 {
+    fn get_moss_area(&self, generator: &NoiseGenerator, pos: Vec2) -> f32 {
         let big_areas = generator.get_noise(pos.y * 0.1);
         let small_areas = generator.get_noise2(pos * 10.);
 

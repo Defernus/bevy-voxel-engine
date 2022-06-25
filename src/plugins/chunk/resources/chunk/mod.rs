@@ -180,7 +180,10 @@ impl Chunk {
 
             if l < radius {
                 count += 1;
-                self.voxels[i].color = generator.randomize_color(pos.to_vec(), voxel.color, 0.2);
+                self.voxels[i].color =
+                    generator
+                        .noise
+                        .randomize_color(pos.to_vec(), voxel.color, 0.2);
                 self.voxels[i].value = self.voxels[i].value.max(-0.001);
                 self.voxels[i].value += value * (radius - l) / radius / (self.voxels[i].value + 1.);
                 self.voxels[i].value = self.voxels[i].value.min(1.);
