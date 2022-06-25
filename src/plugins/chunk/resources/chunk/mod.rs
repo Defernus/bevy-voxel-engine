@@ -14,21 +14,32 @@ pub const CHUNK_VOXELS_VOLUME: usize = CHUNK_VOXELS_SIZE * CHUNK_VOXELS_SIZE * C
 
 #[derive(Component)]
 pub struct Chunk {
-    voxels: [Voxel; CHUNK_VOXELS_VOLUME],
+    voxels: Box<[Voxel; CHUNK_VOXELS_VOLUME]>,
+    pub objects: Box<Vec<Entity>>,
 }
 
 impl Chunk {
     pub fn new(generator: &GeneratorRes, pos: PosComponent) -> Self {
         let mut chunk = Self {
-            voxels: [Voxel {
-                value: 0.,
-                color: Color::rgb(0., 0., 0.),
-            }; CHUNK_VOXELS_VOLUME],
+            objects: Box::new(vec![]),
+            voxels: Box::new(
+                [Voxel {
+                    value: 0.,
+                    color: Color::rgb(0., 0., 0.),
+                }; CHUNK_VOXELS_VOLUME],
+            ),
         };
 
         chunk.generate(pos, generator);
 
         chunk
+    }
+
+    pub fn clear(&mut self, commands: &mut Commands) {
+        for i in self.objects.iter() {
+            commands.entity(*i).despawn_recursive();
+        }
+        self.objects = Box::new(vec![])
     }
 
     pub fn generate_vertices(&mut self, pos: PosComponent) -> Vec<Vertex> {
@@ -63,7 +74,7 @@ impl Chunk {
             (pos.z * CHUNK_REAL_SIZE as i64) as f32,
         );
 
-        generator.generate_voxels(offset, &mut self.voxels, CHUNK_VOXELS_SIZE)
+        generator.generate_voxels(offset, self.voxels.as_mut(), CHUNK_VOXELS_SIZE)
     }
 
     pub fn generate(&mut self, pos: PosComponent, generator: &GeneratorRes) {

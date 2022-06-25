@@ -8,7 +8,7 @@ use self::chunk::Chunk;
 pub mod chunk;
 
 pub enum InWorldChunk {
-    Loaded(Chunk, Entity),
+    Loaded(Box<Chunk>, Entity),
     Loading,
 }
 

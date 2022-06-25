@@ -114,9 +114,10 @@ pub fn spawn_chunk_system(
                     pos,
                 );
                 commands.entity(e).despawn();
-                in_world_chunks
-                    .0
-                    .insert(pos, Box::new(InWorldChunk::Loaded(*chunk, chunk_entity)));
+                in_world_chunks.0.insert(
+                    pos,
+                    Box::new(InWorldChunk::Loaded(Box::new(*chunk), chunk_entity)),
+                );
             }
             _ => {}
         }

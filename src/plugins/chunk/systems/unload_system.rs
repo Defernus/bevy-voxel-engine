@@ -24,19 +24,20 @@ pub fn unload_chunk_system(
     let player_pos = Chunk::get_chunk_pos_by_transform(player_transform);
 
     let mut chunks_to_remove: Vec<PosComponent> = vec![];
-    for (chunk_pos, chunk_data) in in_world_chunks.0.iter() {
-        match **chunk_data {
-            InWorldChunk::Loaded(_, e) => {
+    for (chunk_pos, chunk_data) in in_world_chunks.0.iter_mut() {
+        match chunk_data.as_mut() {
+            InWorldChunk::Loaded(chunk, e) => {
                 let delta = player_pos - chunk_pos.clone();
                 if delta.x.abs().max(delta.y.abs()).max(delta.z.abs())
                     > MAX_RENDER_DISTANCE as i64 + 1
                 {
-                    commands.entity(e).despawn_recursive();
+                    chunk.clear(&mut commands);
+                    commands.entity(e.clone()).despawn_recursive();
                     chunks_to_remove.push(*chunk_pos);
                 }
             }
             _ => {}
-        }
+        };
     }
 
     for chunk_pos in chunks_to_remove {
