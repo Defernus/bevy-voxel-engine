@@ -52,7 +52,7 @@ pub fn player_move_system(
         .get_single_mut()
         .expect("player's light does not exists yet");
 
-    light_transform.translation = player_transform.translation - player_transform.down() * 0.1;
+    *light_transform = player_transform.clone();
 
     update_camera_transform(player_transform.clone(), camera_transform);
 }
