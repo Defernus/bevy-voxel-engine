@@ -8,6 +8,7 @@ use bevy_mod_raycast::RayCastMesh;
 
 use self::chunk_state::{ChunkState, ChunkStateComponent};
 
+pub mod chunk_object;
 pub mod chunk_state;
 pub mod compute_chunk_generation;
 

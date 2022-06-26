@@ -1,6 +1,8 @@
 use bevy::{math::Vec3, prelude::*};
 
-use crate::plugins::generator::resources::noise_generator::NoiseGenerator;
+use crate::plugins::{
+    chunk::resources::chunk::object::Object, generator::resources::noise_generator::NoiseGenerator,
+};
 
 use super::BiomeGenerator;
 
@@ -45,6 +47,10 @@ impl BiomeGenerator for CaveBiomeGenerator {
         noise_v = noise_v.min(0.1);
 
         noise_v
+    }
+
+    fn try_generate_object(&self, _pos: Vec3, _value: f32) -> Option<Object> {
+        None
     }
 }
 

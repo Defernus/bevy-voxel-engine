@@ -4,8 +4,8 @@ use crate::{
         chunk::{
             components::{compute_chunk_generation::ComputeChunkGeneration, spawn_chunk_component},
             resources::{
-                chunk::Chunk, ChunkLoadIterator, ChunkLoadingEnabled, InWorldChunk, InWorldChunks,
-                PrevPlayerPos,
+                chunk::{object::handlers::ObjectHandlers, Chunk},
+                ChunkLoadIterator, ChunkLoadingEnabled, InWorldChunk, InWorldChunks, PrevPlayerPos,
             },
         },
         generator::resources::GeneratorRes,
@@ -97,6 +97,7 @@ pub fn chunk_load_system(
 }
 
 pub fn spawn_chunk_system(
+    handlers: Res<ObjectHandlers>,
     mut in_world_chunks: ResMut<InWorldChunks>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -105,7 +106,7 @@ pub fn spawn_chunk_system(
 ) {
     for (e, ComputeChunkGeneration(rx)) in generation_task.iter() {
         match rx.try_recv() {
-            Ok((pos, chunk, vertices)) => {
+            Ok((pos, mut chunk, vertices)) => {
                 let chunk_entity = spawn_chunk_component(
                     &mut commands,
                     &mut meshes,
@@ -113,6 +114,7 @@ pub fn spawn_chunk_system(
                     vertices,
                     pos,
                 );
+                chunk.process_objects_entities(&mut commands, &handlers);
                 commands.entity(e).despawn();
                 in_world_chunks.0.insert(
                     pos,

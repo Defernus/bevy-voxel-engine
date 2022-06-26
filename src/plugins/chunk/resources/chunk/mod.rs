@@ -2,10 +2,17 @@ use crate::{
     common::components::{pos::PosComponent, static_mesh::vertex::Vertex},
     plugins::generator::resources::GeneratorRes,
 };
-use bevy::prelude::*;
+use bevy::{
+    pbr::{NotShadowCaster, NotShadowReceiver},
+    prelude::*,
+};
 
-use self::voxel::{voxels_to_vertex::append_vertex, Voxel};
+use self::{
+    object::{handlers::ObjectHandlers, Object},
+    voxel::{voxels_to_vertex::append_vertex, Voxel},
+};
 
+pub mod object;
 pub mod voxel;
 
 pub const CHUNK_REAL_SIZE: usize = 32;
@@ -15,7 +22,7 @@ pub const CHUNK_VOXELS_VOLUME: usize = CHUNK_VOXELS_SIZE * CHUNK_VOXELS_SIZE * C
 #[derive(Component)]
 pub struct Chunk {
     voxels: Box<[Voxel; CHUNK_VOXELS_VOLUME]>,
-    pub objects: Box<Vec<Entity>>,
+    pub objects: Box<Vec<Object>>,
 }
 
 impl Chunk {
@@ -36,8 +43,8 @@ impl Chunk {
     }
 
     pub fn clear(&mut self, commands: &mut Commands) {
-        for i in self.objects.iter() {
-            commands.entity(*i).despawn_recursive();
+        for i in self.objects.iter_mut() {
+            i.clear(commands);
         }
         self.objects = Box::new(vec![])
     }
@@ -67,18 +74,61 @@ impl Chunk {
         vertices
     }
 
-    pub fn generate_voxels(&mut self, pos: PosComponent, generator: &GeneratorRes) {
+    pub fn generate(&mut self, pos: PosComponent, generator: &GeneratorRes) {
         let offset = Vec3::new(
             (pos.x * CHUNK_REAL_SIZE as i64) as f32,
             (pos.y * CHUNK_REAL_SIZE as i64) as f32,
             (pos.z * CHUNK_REAL_SIZE as i64) as f32,
         );
 
-        generator.generate_voxels(offset, self.voxels.as_mut(), CHUNK_VOXELS_SIZE)
+        generator.generate_voxels(
+            offset,
+            self.voxels.as_mut(),
+            self.objects.as_mut(),
+            CHUNK_VOXELS_SIZE,
+        )
     }
 
-    pub fn generate(&mut self, pos: PosComponent, generator: &GeneratorRes) {
-        self.generate_voxels(pos, generator);
+    pub fn process_objects_entities(&mut self, commands: &mut Commands, handlers: &ObjectHandlers) {
+        for o in self.objects.iter_mut() {
+            let handler = handlers
+                .handlers
+                .get(o.id)
+                .expect(format!("unknown id {}", o.id).as_ref());
+
+            let mut light_transform = o.transform;
+            light_transform.translation -= Vec3::Y;
+
+            println!("spawn light at {}", light_transform.translation);
+
+            let light = commands
+                .spawn_bundle(PointLightBundle {
+                    point_light: PointLight {
+                        intensity: 4000.,
+                        range: 1000.,
+                        color: Color::rgb(0.9, 0.9, 1.),
+                        shadows_enabled: false,
+                        ..default()
+                    },
+                    ..default()
+                })
+                .id();
+
+            o.entity = Some(
+                commands
+                    .spawn()
+                    .insert_bundle(PbrBundle {
+                        material: handler.material.clone(),
+                        mesh: handler.mesh.clone(),
+                        transform: o.transform,
+                        ..default()
+                    })
+                    .insert(NotShadowCaster)
+                    .insert(NotShadowReceiver)
+                    .add_child(light)
+                    .id(),
+            );
+        }
     }
 
     pub fn check_pos_in_chunk(pos: PosComponent) -> bool {

@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 use crate::common::components::pos::PosComponent;
 
+use self::resources::chunk::object::handlers::ObjectHandlers;
 use self::resources::{
     ChunkLoadIterator, ChunkLoadingEnabled, ChunkUnloadingEnabled, InWorldChunks, PrevPlayerPos,
 };
@@ -15,7 +16,13 @@ pub mod resources;
 mod systems;
 pub struct ChunkPlugin;
 
-fn chunk_startup_system() {}
+fn chunk_startup_system(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+) {
+    commands.insert_resource(ObjectHandlers::new(&mut meshes, &mut materials));
+}
 
 impl Plugin for ChunkPlugin {
     fn build(&self, app: &mut App) {

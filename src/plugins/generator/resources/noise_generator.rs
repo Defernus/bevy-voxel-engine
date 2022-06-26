@@ -6,7 +6,7 @@ use noise::NoiseFn;
 
 #[derive(Clone)]
 pub struct NoiseGenerator {
-    simplex: noise::OpenSimplex,
+    pub simplex: noise::OpenSimplex,
 }
 
 impl NoiseGenerator {
