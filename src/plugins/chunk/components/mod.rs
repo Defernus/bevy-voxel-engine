@@ -4,7 +4,7 @@ use crate::common::components::{
     static_mesh::{vertex::Vertex, StaticMeshComponent},
 };
 use bevy::prelude::*;
-use bevy_mod_raycast::RayCastMesh;
+use bevy_mod_raycast::RaycastMesh;
 
 use self::chunk_state::{ChunkState, ChunkStateComponent};
 
@@ -25,10 +25,9 @@ pub fn spawn_chunk_component(
     let mesh = StaticMeshComponent::spawn(commands, meshes, materials, vertices);
     commands
         .entity(mesh)
-        .insert(RayCastMesh::<RayLet>::default());
+        .insert(RaycastMesh::<RayLet>::default());
     commands
-        .spawn()
-        .insert(ChunkComponent)
+        .spawn(ChunkComponent)
         .insert(chunk_pos)
         .insert(ChunkStateComponent(ChunkState::NotInitialized))
         .add_child(mesh)

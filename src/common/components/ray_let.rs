@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, reflect::TypePath};
 
-#[derive(Component)]
+#[derive(Component, TypePath)]
 pub struct RayLet;

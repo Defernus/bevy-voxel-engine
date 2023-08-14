@@ -1,11 +1,4 @@
-use bevy::{
-    pbr::{NotShadowCaster, NotShadowReceiver},
-    prelude::*,
-};
-
-use crate::plugins::chunk::components::chunk_object::ChunkObjectComponent;
-
-use self::handlers::ObjectHandlers;
+use bevy::prelude::*;
 
 pub mod handlers;
 

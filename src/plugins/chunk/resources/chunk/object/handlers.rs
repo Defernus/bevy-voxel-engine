@@ -12,6 +12,7 @@ impl ObjectHandler {
     }
 }
 
+#[derive(Resource)]
 pub struct ObjectHandlers {
     pub handlers: Vec<ObjectHandler>,
 }

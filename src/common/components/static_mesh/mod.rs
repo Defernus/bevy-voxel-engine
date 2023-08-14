@@ -15,10 +15,10 @@ impl StaticMeshComponent {
         vertices: Vec<Vertex>,
     ) -> Entity {
         return commands
-            .spawn_bundle(PbrBundle {
+            .spawn(PbrBundle {
                 mesh: meshes.add(Self::generate_mesh(vertices)),
                 material: materials.add(StandardMaterial {
-                    base_color: Color::rgb(1.0, 1.0, 1.0).into(),
+                    base_color: Color::rgb(1.0, 1.0, 1.0),
                     perceptual_roughness: 1.,
                     metallic: 0.,
                     reflectance: 0.,

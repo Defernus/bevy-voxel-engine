@@ -16,12 +16,12 @@ pub fn move_glide(
     transform: &mut Transform,
     dt: f32,
 ) {
-    let drag_val = if keys.pressed(KeyCode::LShift) {
+    let drag_val = if keys.pressed(KeyCode::ShiftLeft) {
         SHIFT_DRAG
     } else {
         DRAG
     };
-    let side_drag_val = if keys.pressed(KeyCode::LShift) {
+    let side_drag_val = if keys.pressed(KeyCode::ShiftLeft) {
         SHIFT_SIZE_DRAG
     } else {
         SIDE_DRAG

@@ -102,7 +102,7 @@ impl Chunk {
             println!("spawn light at {}", light_transform.translation);
 
             let light = commands
-                .spawn_bundle(PointLightBundle {
+                .spawn(PointLightBundle {
                     point_light: PointLight {
                         intensity: 4000.,
                         range: 1000.,
@@ -116,8 +116,7 @@ impl Chunk {
 
             o.entity = Some(
                 commands
-                    .spawn()
-                    .insert_bundle(PbrBundle {
+                    .spawn(PbrBundle {
                         material: handler.material.clone(),
                         mesh: handler.mesh.clone(),
                         transform: o.transform,

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_mod_raycast::Intersection;
+use bevy_mod_raycast::RaycastMesh;
 
 use crate::{
     common::components::{pos::PosComponent, ray_let::RayLet},
@@ -26,7 +26,7 @@ enum DeformType {
 
 fn deform_chunk(
     generator: &GeneratorRes,
-    intersection_query: &Query<&Intersection<RayLet>>,
+    raycast_query: &Query<&RaycastMesh<RayLet>>,
     chunks: &mut InWorldChunks,
     commands: &mut Commands,
     meshes: &mut Assets<Mesh>,
@@ -34,15 +34,15 @@ fn deform_chunk(
     dt: f32,
     deform_type: DeformType,
 ) -> Option<()> {
-    let intersection_res = intersection_query.get_single();
-
-    if intersection_res.is_err() {
+    let Ok(raycast) = raycast_query.get_single() else {
         return None;
-    }
-    let intersection = intersection_res.unwrap();
+    };
+    let Some(intersection) = raycast.intersections.first() else {
+        return None;
+    };
 
-    let pos = intersection.position()?;
-    let dist = intersection.distance()?;
+    let pos = intersection.1.position();
+    let dist = intersection.1.distance();
     if dist > MAX_DEFORM_DIST {
         return None;
     }
@@ -57,7 +57,7 @@ fn deform_chunk(
 
     let voxel_pos = PosComponent::new(pos.x as i64, pos.y as i64, pos.z as i64);
 
-    for chunk_pos in Chunk::get_chunk_pos_by_vec(*pos).iter_neighbors(true) {
+    for chunk_pos in Chunk::get_chunk_pos_by_vec(pos).iter_neighbors(true) {
         // !TODO generate chunk if not generated yet to prevent gaps formations on chunks edges
         match chunks.0.get_mut(&chunk_pos)?.as_mut() {
             InWorldChunk::Loaded(chunk, e) => {
@@ -89,7 +89,7 @@ fn deform_chunk(
 }
 
 pub fn chunk_deform_system(
-    intersection_query: Query<&Intersection<RayLet>>,
+    raycast_query: Query<&RaycastMesh<RayLet>>,
     generator: Res<GeneratorRes>,
     mut chunks: ResMut<InWorldChunks>,
     mut commands: Commands,
@@ -102,7 +102,7 @@ pub fn chunk_deform_system(
     if buttons.pressed(MouseButton::Left) {
         deform_chunk(
             &generator,
-            &intersection_query,
+            &raycast_query,
             &mut chunks,
             &mut commands,
             &mut meshes,
@@ -114,7 +114,7 @@ pub fn chunk_deform_system(
     if buttons.pressed(MouseButton::Right) {
         deform_chunk(
             &generator,
-            &intersection_query,
+            &raycast_query,
             &mut chunks,
             &mut commands,
             &mut meshes,

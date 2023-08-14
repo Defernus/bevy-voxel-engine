@@ -56,7 +56,7 @@ fn generate_chunk(
             }
         });
 
-        commands.spawn().insert(ComputeChunkGeneration(rx));
+        commands.spawn(ComputeChunkGeneration(rx));
     }
     Some(())
 }

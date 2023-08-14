@@ -12,6 +12,7 @@ pub enum InWorldChunk {
     Loading,
 }
 
+#[derive(Resource)]
 pub struct InWorldChunks(pub BTreeMap<PosComponent, Box<InWorldChunk>>);
 
 impl InWorldChunks {
@@ -20,8 +21,12 @@ impl InWorldChunks {
     }
 }
 
+#[derive(Resource)]
 pub struct PrevPlayerPos(pub PosComponent);
+#[derive(Resource)]
 pub struct ChunkLoadIterator(pub PosComponentAroundIterator);
 
+#[derive(Resource)]
 pub struct ChunkLoadingEnabled(pub bool);
+#[derive(Resource)]
 pub struct ChunkUnloadingEnabled(pub bool);
