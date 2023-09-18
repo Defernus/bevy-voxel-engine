@@ -31,12 +31,12 @@ impl StaticMeshComponent {
     }
 
     pub fn generate_mesh(vertices: Vec<Vertex>) -> Mesh {
-        let mut indices_vec = Vec::new();
+        let mut indices_vec = Vec::with_capacity(vertices.len());
 
-        let mut positions: Vec<[f32; 3]> = Vec::new();
-        let mut normals: Vec<[f32; 3]> = Vec::new();
-        let mut colors: Vec<[f32; 4]> = Vec::new();
-        let mut uvs: Vec<[f32; 2]> = Vec::new();
+        let mut positions: Vec<[f32; 3]> = Vec::with_capacity(vertices.len());
+        let mut normals: Vec<[f32; 3]> = Vec::with_capacity(vertices.len());
+        let mut colors: Vec<[f32; 4]> = Vec::with_capacity(vertices.len());
+        let mut uvs: Vec<[f32; 2]> = Vec::with_capacity(vertices.len());
         for vertex in vertices.iter() {
             indices_vec.push(positions.len() as u32);
 

@@ -131,12 +131,12 @@ impl Chunk {
     }
 
     pub fn check_pos_in_chunk(pos: PosComponent) -> bool {
-        return pos.x >= 0
+        pos.x >= 0
             && pos.x < CHUNK_VOXELS_SIZE as i64
             && pos.y >= 0
             && pos.y < CHUNK_VOXELS_SIZE as i64
             && pos.z >= 0
-            && pos.z < CHUNK_VOXELS_SIZE as i64;
+            && pos.z < CHUNK_VOXELS_SIZE as i64
     }
 
     pub fn pos_to_index(pos: PosComponent) -> Option<usize> {

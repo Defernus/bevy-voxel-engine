@@ -30,6 +30,7 @@ pub fn spawn_chunk_component(
         .spawn(ChunkComponent)
         .insert(chunk_pos)
         .insert(ChunkStateComponent(ChunkState::NotInitialized))
+        .insert(SpatialBundle::default())
         .add_child(mesh)
         .id()
 }
