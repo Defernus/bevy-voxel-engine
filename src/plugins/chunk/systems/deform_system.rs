@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_mod_raycast::RaycastMesh;
+use bevy_mod_raycast::{RaycastMesh, RaycastSource};
 
 use crate::{
     common::components::{pos::PosComponent, ray_let::RayLet},
@@ -26,7 +26,7 @@ enum DeformType {
 
 fn deform_chunk(
     generator: &GeneratorRes,
-    raycast_query: &Query<&RaycastMesh<RayLet>>,
+    raycast_query: &Query<&RaycastSource<RayLet>>,
     chunks: &mut InWorldChunks,
     commands: &mut Commands,
     meshes: &mut Assets<Mesh>,
@@ -37,7 +37,7 @@ fn deform_chunk(
     let Ok(raycast) = raycast_query.get_single() else {
         return None;
     };
-    let Some(intersection) = raycast.intersections.first() else {
+    let Some(intersection) = raycast.intersections().first() else {
         return None;
     };
 
@@ -89,7 +89,7 @@ fn deform_chunk(
 }
 
 pub fn chunk_deform_system(
-    raycast_query: Query<&RaycastMesh<RayLet>>,
+    raycast_query: Query<&RaycastSource<RayLet>>,
     generator: Res<GeneratorRes>,
     mut chunks: ResMut<InWorldChunks>,
     mut commands: Commands,
