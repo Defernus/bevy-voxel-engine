@@ -1,16 +1,20 @@
 use bevy::{
     app::AppExit,
-    diagnostic::{Diagnostics, FrameTimeDiagnosticsPlugin},
+    diagnostic::{DiagnosticsStore, FrameTimeDiagnosticsPlugin},
     prelude::*,
+    window::{CursorGrabMode, PresentMode},
 };
 
 pub struct WindowPlugin;
 
-fn window_startup_system(mut windows: ResMut<Windows>) {
-    let window = windows.get_primary_mut().unwrap();
-    window.set_cursor_position(Vec2::new(window.width() / 2., window.height() / 2.));
-    window.set_cursor_visibility(false);
-    window.set_cursor_lock_mode(true);
+fn window_startup_system(mut windows: Query<&mut Window>) {
+    let mut window = windows.get_single_mut().unwrap();
+    let width = window.width();
+    let height = window.height();
+    window.set_cursor_position(Some(Vec2::new(width / 2., height / 2.)));
+    window.cursor.visible = false;
+    window.cursor.grab_mode = CursorGrabMode::Locked;
+    window.present_mode = PresentMode::Mailbox;
 }
 
 fn window_close_system(mut exit: EventWriter<AppExit>, keys: Res<Input<KeyCode>>) {
@@ -19,23 +23,21 @@ fn window_close_system(mut exit: EventWriter<AppExit>, keys: Res<Input<KeyCode>>
     }
 }
 
-fn window_fps_system(mut windows: ResMut<Windows>, diagnostics: Res<Diagnostics>) {
-    let window = windows.get_primary_mut().unwrap();
+fn window_fps_system(mut windows: Query<&mut Window>, diagnostics: Res<DiagnosticsStore>) {
+    let mut window = windows.get_single_mut().unwrap();
     let fps = diagnostics
         .get(FrameTimeDiagnosticsPlugin::FPS)
         .expect("fps plugin not added");
-    match fps.value() {
-        Some(average) => {
-            window.set_title(format!("fps: {}", average as i32));
-        }
-        _ => {}
+    if let Some(average) = fps.value() {
+        window.title = format!("fps: {}", average as i32);
     }
 }
 
 impl Plugin for WindowPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(window_startup_system)
-            .add_system(window_close_system)
-            .add_system(window_fps_system);
+        app.add_systems(Startup, window_startup_system)
+            .add_systems(Update, window_close_system)
+            // REVIEW: Should this be PostUpdate?
+            .add_systems(Update, window_fps_system);
     }
 }

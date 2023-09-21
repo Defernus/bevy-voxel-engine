@@ -8,15 +8,10 @@ pub mod move_system;
 pub mod rotate_system;
 
 pub fn player_startup_system(mut commands: Commands) {
-    commands
-        .spawn()
-        .insert(PlayerComponent::default())
-        .insert(Transform::default());
-
-    commands
-        .spawn()
-        .insert(PlayerLightComponent)
-        .insert_bundle(PointLightBundle {
+    commands.spawn((PlayerComponent::default(), Transform::default()));
+    commands.spawn((
+        PlayerLightComponent,
+        PointLightBundle {
             transform: Transform::default(),
             point_light: PointLight {
                 intensity: 2000.,
@@ -26,5 +21,6 @@ pub fn player_startup_system(mut commands: Commands) {
                 ..default()
             },
             ..default()
-        });
+        },
+    ));
 }

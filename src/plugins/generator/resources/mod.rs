@@ -1,4 +1,7 @@
-use bevy::math::{Vec2, Vec3};
+use bevy::{
+    math::{Vec2, Vec3},
+    prelude::Resource,
+};
 use noise::NoiseFn;
 
 use crate::plugins::chunk::resources::chunk::{object::Object, voxel::Voxel};
@@ -8,7 +11,7 @@ use self::{biomes::BiomesHandler, noise_generator::NoiseGenerator};
 mod biomes;
 mod noise_generator;
 
-#[derive(Clone)]
+#[derive(Clone, Resource)]
 pub struct GeneratorRes {
     scale: f32,
     object_spawn_tries: usize,
@@ -94,7 +97,7 @@ impl GeneratorRes {
             };
         }
 
-        return generated;
+        generated
     }
 }
 

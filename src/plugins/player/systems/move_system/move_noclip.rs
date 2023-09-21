@@ -14,7 +14,7 @@ pub fn move_noclip(
     let imut_transform = transform.clone();
     player.speed = Vec3::ZERO;
 
-    let speed = if keys.pressed(KeyCode::LShift) {
+    let speed = if keys.pressed(KeyCode::ShiftLeft) {
         NOCLIP_SHIFT_SPEED
     } else {
         NOCLIP_BASE_SPEED
@@ -36,7 +36,7 @@ pub fn move_noclip(
         transform.translation += imut_transform.right() * speed * dt;
     }
 
-    if keys.pressed(KeyCode::LControl) {
+    if keys.pressed(KeyCode::ControlLeft) {
         transform.translation -= Vec3::Y * speed * dt;
     }
 

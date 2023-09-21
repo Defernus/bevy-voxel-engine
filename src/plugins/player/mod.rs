@@ -11,9 +11,9 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(player_startup_system)
-            .add_system(player_control_system)
-            .add_system(player_move_system)
-            .add_system(player_rotate_system);
+        app.add_systems(Startup, player_startup_system)
+            .add_systems(Update, player_control_system)
+            .add_systems(Update, player_move_system)
+            .add_systems(Update, player_rotate_system);
     }
 }

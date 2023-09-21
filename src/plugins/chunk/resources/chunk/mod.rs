@@ -102,7 +102,7 @@ impl Chunk {
             println!("spawn light at {}", light_transform.translation);
 
             let light = commands
-                .spawn_bundle(PointLightBundle {
+                .spawn(PointLightBundle {
                     point_light: PointLight {
                         intensity: 4000.,
                         range: 1000.,
@@ -116,8 +116,7 @@ impl Chunk {
 
             o.entity = Some(
                 commands
-                    .spawn()
-                    .insert_bundle(PbrBundle {
+                    .spawn(PbrBundle {
                         material: handler.material.clone(),
                         mesh: handler.mesh.clone(),
                         transform: o.transform,
@@ -132,12 +131,12 @@ impl Chunk {
     }
 
     pub fn check_pos_in_chunk(pos: PosComponent) -> bool {
-        return pos.x >= 0
+        pos.x >= 0
             && pos.x < CHUNK_VOXELS_SIZE as i64
             && pos.y >= 0
             && pos.y < CHUNK_VOXELS_SIZE as i64
             && pos.z >= 0
-            && pos.z < CHUNK_VOXELS_SIZE as i64;
+            && pos.z < CHUNK_VOXELS_SIZE as i64
     }
 
     pub fn pos_to_index(pos: PosComponent) -> Option<usize> {

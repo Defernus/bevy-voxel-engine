@@ -27,12 +27,12 @@ pub fn unload_chunk_system(
     for (chunk_pos, chunk_data) in in_world_chunks.0.iter_mut() {
         match chunk_data.as_mut() {
             InWorldChunk::Loaded(chunk, e) => {
-                let delta = player_pos - chunk_pos.clone();
+                let delta = player_pos - *chunk_pos;
                 if delta.x.abs().max(delta.y.abs()).max(delta.z.abs())
                     > MAX_RENDER_DISTANCE as i64 + 1
                 {
                     chunk.clear(&mut commands);
-                    commands.entity(e.clone()).despawn_recursive();
+                    commands.entity(*e).despawn_recursive();
                     chunks_to_remove.push(*chunk_pos);
                 }
             }

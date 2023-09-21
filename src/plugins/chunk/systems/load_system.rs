@@ -48,15 +48,12 @@ fn generate_chunk(
             let mut chunk = Chunk::new(&gen, pos);
             let vertices = chunk.generate_vertices(pos);
 
-            match tx.send((pos, Box::new(chunk), vertices)) {
-                Err(err) => {
-                    panic!("failed to send chunk data after generation: {}", err);
-                }
-                _ => {}
+            if let Err(err) = tx.send((pos, Box::new(chunk), vertices)) {
+                panic!("failed to send chunk data after generation: {}", err);
             }
         });
 
-        commands.spawn().insert(ComputeChunkGeneration(rx));
+        commands.spawn(ComputeChunkGeneration(rx));
     }
     Some(())
 }

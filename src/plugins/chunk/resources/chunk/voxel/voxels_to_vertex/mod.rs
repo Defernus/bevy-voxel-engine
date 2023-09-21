@@ -124,7 +124,7 @@ fn get_voxel(chunk: &Chunk, pos: PosComponent) -> Voxel {
 }
 
 fn get_voxels_for_vertex(chunk: &Chunk, base_pos: PosComponent) -> VoxelsBlock {
-    let voxels: [[[Voxel; 2]; 2]; 2] = [
+    [
         [
             [
                 get_voxel(chunk, base_pos + PosComponent::new(0, 0, 0)),
@@ -145,8 +145,7 @@ fn get_voxels_for_vertex(chunk: &Chunk, base_pos: PosComponent) -> VoxelsBlock {
                 get_voxel(chunk, base_pos + PosComponent::new(1, 1, 1)),
             ],
         ],
-    ];
-    return voxels;
+    ]
 }
 
 fn chose_voxel_for_node(a: Voxel, b: Voxel) -> Voxel {
@@ -162,10 +161,10 @@ fn chose_voxel_for_node(a: Voxel, b: Voxel) -> Voxel {
             value: 1.0 - (-b.value) / (a.value - b.value),
         };
     }
-    return Voxel {
+    Voxel {
         value: 0.,
         color: Color::BLACK,
-    };
+    }
 }
 
 fn get_vertex_nodes(voxels: VoxelsBlock) -> Nodes {
@@ -189,7 +188,7 @@ fn get_vertex_nodes(voxels: VoxelsBlock) -> Nodes {
     result[get_node_un().index] = chose_voxel_for_node(voxels[0][1][1], voxels[1][1][1]);
     result[get_node_uw().index] = chose_voxel_for_node(voxels[0][1][0], voxels[0][1][1]);
 
-    return result;
+    result
 }
 
 fn shift_node_pos(pos: Vec3, value: f32) -> Vec3 {
@@ -218,7 +217,7 @@ fn append_triangle(
     let b_v = nodes[b.index];
     let c_v = nodes[c.index];
 
-    if a_v.value < 0. || a_v.value < 0. || c_v.value < 0. {
+    if a_v.value < 0. || b_v.value < 0. || c_v.value < 0. {
         return;
     }
 
