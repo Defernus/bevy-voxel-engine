@@ -97,7 +97,7 @@ impl GeneratorRes {
             };
         }
 
-        return generated;
+        generated
     }
 }
 
