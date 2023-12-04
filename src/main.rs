@@ -1,5 +1,5 @@
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
-use bevy_mod_raycast::DefaultRaycastingPlugin;
+use bevy_mod_raycast::deferred::DeferredRaycastingPlugin;
 use voxel_engine_bevy::{
     common::components::ray_let::RayLet,
     plugins::{
@@ -11,7 +11,7 @@ use voxel_engine_bevy::{
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(DefaultRaycastingPlugin::<RayLet>::default())
+        .add_plugins(DeferredRaycastingPlugin::<RayLet>::default())
         .add_plugins(FrameTimeDiagnosticsPlugin::default())
         .add_plugins(WindowPlugin)
         .add_plugins(GeneratorPlugin)
