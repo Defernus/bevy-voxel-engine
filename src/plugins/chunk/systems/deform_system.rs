@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_mod_raycast::RaycastSource;
+use bevy_mod_raycast::prelude::RaycastSource;
 
 use crate::{
     common::components::{pos::PosComponent, ray_let::RayLet},

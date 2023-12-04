@@ -4,7 +4,7 @@ use crate::common::components::{
     static_mesh::{vertex::Vertex, StaticMeshComponent},
 };
 use bevy::prelude::*;
-use bevy_mod_raycast::RaycastMesh;
+use bevy_mod_raycast::prelude::RaycastMesh;
 
 use self::chunk_state::{ChunkState, ChunkStateComponent};
 

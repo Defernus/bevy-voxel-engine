@@ -1,6 +1,6 @@
 use crate::common::components::ray_let::RayLet;
 use bevy::{core_pipeline::clear_color::ClearColorConfig, prelude::*, render::camera::Projection};
-use bevy_mod_raycast::RaycastSource;
+use bevy_mod_raycast::prelude::RaycastSource;
 
 use super::components::CameraComponent;
 

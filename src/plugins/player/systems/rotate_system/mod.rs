@@ -20,7 +20,7 @@ pub fn player_rotate_system(
 
     let mut rotation_move = Vec2::ZERO;
 
-    for ev in ev_motion.iter() {
+    for ev in ev_motion.read() {
         rotation_move += ev.delta;
     }
 
