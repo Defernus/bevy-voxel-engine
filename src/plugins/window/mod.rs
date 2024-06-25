@@ -17,7 +17,7 @@ fn window_startup_system(mut windows: Query<&mut Window>) {
     window.present_mode = PresentMode::Mailbox;
 }
 
-fn window_close_system(mut exit: EventWriter<AppExit>, keys: Res<Input<KeyCode>>) {
+fn window_close_system(mut exit: EventWriter<AppExit>, keys: Res<ButtonInput<KeyCode>>) {
     if keys.pressed(KeyCode::Escape) {
         exit.send(AppExit);
     }
@@ -26,7 +26,7 @@ fn window_close_system(mut exit: EventWriter<AppExit>, keys: Res<Input<KeyCode>>
 fn window_fps_system(mut windows: Query<&mut Window>, diagnostics: Res<DiagnosticsStore>) {
     let mut window = windows.get_single_mut().unwrap();
     let fps = diagnostics
-        .get(FrameTimeDiagnosticsPlugin::FPS)
+        .get(&FrameTimeDiagnosticsPlugin::FPS)
         .expect("fps plugin not added");
     if let Some(average) = fps.value() {
         window.title = format!("fps: {}", average as i32);

@@ -9,7 +9,7 @@ mod move_glide;
 mod move_noclip;
 
 pub fn player_move_system(
-    keys: Res<Input<KeyCode>>,
+    keys: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     mut light_q: Query<
         &mut Transform,

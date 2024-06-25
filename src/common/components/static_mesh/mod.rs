@@ -1,5 +1,6 @@
 use self::vertex::Vertex;
 use bevy::render::mesh::{self, PrimitiveTopology};
+use bevy::render::render_asset::RenderAssetUsages;
 use bevy::{pbr::PbrBundle, prelude::*};
 
 pub mod vertex;
@@ -42,14 +43,17 @@ impl StaticMeshComponent {
 
             positions.push(vertex.pos.into());
             normals.push(vertex.normal.into());
-            colors.push(vertex.color.into());
+            colors.push(vertex.color.as_rgba_f32());
             uvs.push([1., 1.]);
         }
 
         let indices = mesh::Indices::U32(indices_vec);
 
-        let mut mesh = Mesh::new(PrimitiveTopology::TriangleList);
-        mesh.set_indices(Some(indices));
+        let mut mesh = Mesh::new(
+            PrimitiveTopology::TriangleList,
+            RenderAssetUsages::default(),
+        );
+        mesh.insert_indices(indices);
         mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
         mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, normals);
         mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);

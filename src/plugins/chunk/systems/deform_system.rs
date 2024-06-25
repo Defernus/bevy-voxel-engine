@@ -96,7 +96,7 @@ pub fn chunk_deform_system(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     time: Res<Time>,
-    buttons: Res<Input<MouseButton>>,
+    buttons: Res<ButtonInput<MouseButton>>,
 ) {
     let dt = time.delta_seconds_f64() as f32;
     if buttons.pressed(MouseButton::Left) {

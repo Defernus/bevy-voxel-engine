@@ -5,7 +5,7 @@ use crate::plugins::chunk::resources::{ChunkLoadingEnabled, ChunkUnloadingEnable
 pub fn chunk_loading_control_system(
     mut chunk_load_enabled: ResMut<ChunkLoadingEnabled>,
     mut chunk_unload_enabled: ResMut<ChunkUnloadingEnabled>,
-    keys: Res<Input<KeyCode>>,
+    keys: Res<ButtonInput<KeyCode>>,
 ) {
     if keys.just_pressed(KeyCode::BracketRight) {
         chunk_load_enabled.0 = !chunk_load_enabled.0;

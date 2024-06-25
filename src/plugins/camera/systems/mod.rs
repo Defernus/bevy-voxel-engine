@@ -1,5 +1,8 @@
 use crate::common::components::ray_let::RayLet;
-use bevy::{core_pipeline::clear_color::ClearColorConfig, prelude::*, render::camera::Projection};
+use bevy::{
+    prelude::*,
+    render::camera::{ClearColorConfig, Projection},
+};
 use bevy_mod_raycast::prelude::RaycastSource;
 
 use super::components::CameraComponent;
@@ -7,7 +10,7 @@ use super::components::CameraComponent;
 pub fn camera_startup_system(mut commands: Commands) {
     commands
         .spawn(Camera3dBundle {
-            camera_3d: Camera3d {
+            camera: Camera {
                 clear_color: ClearColorConfig::Custom(Color::rgb_u8(0x47, 0x48, 0x50)),
                 ..default()
             },

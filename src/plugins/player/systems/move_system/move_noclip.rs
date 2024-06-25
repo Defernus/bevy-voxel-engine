@@ -6,7 +6,7 @@ const NOCLIP_BASE_SPEED: f32 = 10.;
 const NOCLIP_SHIFT_SPEED: f32 = 50.;
 
 pub fn move_noclip(
-    keys: &Input<KeyCode>,
+    keys: &ButtonInput<KeyCode>,
     player: &mut PlayerComponent,
     transform: &mut Transform,
     dt: f32,
@@ -20,19 +20,19 @@ pub fn move_noclip(
         NOCLIP_BASE_SPEED
     };
 
-    if keys.pressed(KeyCode::W) {
+    if keys.pressed(KeyCode::KeyW) {
         transform.translation += imut_transform.forward() * speed * dt;
     }
 
-    if keys.pressed(KeyCode::S) {
+    if keys.pressed(KeyCode::KeyS) {
         transform.translation += imut_transform.back() * speed * dt;
     }
 
-    if keys.pressed(KeyCode::A) {
+    if keys.pressed(KeyCode::KeyA) {
         transform.translation += imut_transform.left() * speed * dt;
     }
 
-    if keys.pressed(KeyCode::D) {
+    if keys.pressed(KeyCode::KeyD) {
         transform.translation += imut_transform.right() * speed * dt;
     }
 
