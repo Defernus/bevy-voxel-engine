@@ -14,7 +14,7 @@ pub fn player_startup_system(mut commands: Commands) {
         PointLightBundle {
             transform: Transform::default(),
             point_light: PointLight {
-                intensity: 2000.,
+                intensity: 1_000_000.,
                 range: 500.,
                 color: Color::rgb(1., 0.9, 0.7),
                 shadows_enabled: false,

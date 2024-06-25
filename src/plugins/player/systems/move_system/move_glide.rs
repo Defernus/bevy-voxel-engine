@@ -11,7 +11,7 @@ const DRAG: f32 = 0.5;
 const SHIFT_DRAG: f32 = 0.01;
 
 pub fn move_glide(
-    keys: &Input<KeyCode>,
+    keys: &ButtonInput<KeyCode>,
     player: &mut PlayerComponent,
     transform: &mut Transform,
     dt: f32,
@@ -29,7 +29,7 @@ pub fn move_glide(
 
     let forward = transform.forward();
 
-    let forward_speed = player.speed.dot(forward) * forward;
+    let forward_speed = player.speed.dot(*forward) * *forward;
 
     let drag_a = -player.speed * drag_val;
     let g_a = -Vec3::Y * G_FORCES;
