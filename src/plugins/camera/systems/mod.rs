@@ -11,7 +11,7 @@ pub fn camera_startup_system(mut commands: Commands) {
     commands
         .spawn(Camera3dBundle {
             camera: Camera {
-                clear_color: ClearColorConfig::Custom(Color::rgb_u8(0x47, 0x48, 0x50)),
+                clear_color: ClearColorConfig::Custom(Color::srgb_u8(0x47, 0x48, 0x50)),
                 ..default()
             },
             transform: Transform::default(),

@@ -23,10 +23,10 @@ impl BiomeGenerator for GladeBiomeGenerator {
     }
 
     fn get_voxel_color(&self, _generator: &NoiseGenerator, pos: Vec3, value: f32) -> Color {
-        let mut color = Color::rgb(0.3, 0.3, 0.4);
+        let mut color = Color::srgb(0.3, 0.3, 0.4);
 
         if pos.y + 0.5 - self.layer2d.grass_value < 0. && value < 0.003 {
-            color = Color::rgb(0.1, 1.0, 0.3);
+            color = Color::srgb(0.1, 1.0, 0.3);
         }
 
         color

@@ -19,7 +19,7 @@ impl StaticMeshComponent {
             .spawn(PbrBundle {
                 mesh: meshes.add(Self::generate_mesh(vertices)),
                 material: materials.add(StandardMaterial {
-                    base_color: Color::rgb(1.0, 1.0, 1.0),
+                    base_color: Color::srgb(1.0, 1.0, 1.0),
                     perceptual_roughness: 1.,
                     metallic: 0.,
                     reflectance: 0.,
@@ -43,7 +43,7 @@ impl StaticMeshComponent {
 
             positions.push(vertex.pos.into());
             normals.push(vertex.normal.into());
-            colors.push(vertex.color.as_rgba_f32());
+            colors.push(vertex.color.to_srgba().to_vec4().into());
             uvs.push([1., 1.]);
         }
 

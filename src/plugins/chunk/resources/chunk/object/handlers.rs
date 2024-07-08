@@ -40,7 +40,7 @@ impl ObjectHandlers {
                 ])),
                 materials.add(StandardMaterial {
                     base_color: Color::WHITE,
-                    emissive: Color::rgb(0., 0., 1.),
+                    emissive: Color::srgb(0., 0., 1.).to_linear(),
                     metallic: 1.,
                     reflectance: 1.,
                     double_sided: true,
