@@ -45,10 +45,16 @@ impl NoiseGenerator {
         let dg = self.get_noise3(pos / 2.4 * Vec3::new(-1., 1., 1.)) * factor;
         let db = self.get_noise3(pos / 2.4 * Vec3::new(1., -1., 1.)) * factor;
 
-        Color::rgb(
-            (color.r() + color.r() * dr).max(0.).min(1.),
-            (color.g() + color.g() * dg).max(0.).min(1.),
-            (color.b() + color.b() * db).max(0.).min(1.),
+        Color::srgb(
+            (color.to_srgba().red + color.to_srgba().red * dr)
+                .max(0.)
+                .min(1.),
+            (color.to_srgba().green + color.to_srgba().green * dg)
+                .max(0.)
+                .min(1.),
+            (color.to_srgba().blue + color.to_srgba().blue * db)
+                .max(0.)
+                .min(1.),
         )
     }
 }

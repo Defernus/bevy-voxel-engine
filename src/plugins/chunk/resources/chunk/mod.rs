@@ -32,7 +32,7 @@ impl Chunk {
             voxels: Box::new(
                 [Voxel {
                     value: 0.,
-                    color: Color::rgb(0., 0., 0.),
+                    color: Color::srgb(0., 0., 0.),
                 }; CHUNK_VOXELS_VOLUME],
             ),
         };
@@ -106,7 +106,7 @@ impl Chunk {
                     point_light: PointLight {
                         intensity: 4000.,
                         range: 1000.,
-                        color: Color::rgb(0.9, 0.9, 1.),
+                        color: Color::srgb(0.9, 0.9, 1.),
                         shadows_enabled: false,
                         ..default()
                     },

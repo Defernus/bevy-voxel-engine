@@ -107,7 +107,16 @@ impl BiomesHandler {
 
         self.voxel = Voxel {
             value: self.prev_value * (1. - self.transition) + self.next_value * self.transition,
-            color: prev_color * (1. - self.transition) + next_color * self.transition,
+            color: Color::srgba(
+                prev_color.to_srgba().red * (1.0 - self.transition)
+                    + next_color.to_srgba().red * self.transition,
+                prev_color.to_srgba().green * (1.0 - self.transition)
+                    + next_color.to_srgba().green * self.transition,
+                prev_color.to_srgba().blue * (1.0 - self.transition)
+                    + next_color.to_srgba().blue * self.transition,
+                prev_color.to_srgba().alpha * (1.0 - self.transition)
+                    + next_color.to_srgba().alpha * self.transition,
+            ),
         };
     }
 

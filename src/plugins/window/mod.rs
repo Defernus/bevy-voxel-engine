@@ -19,7 +19,7 @@ fn window_startup_system(mut windows: Query<&mut Window>) {
 
 fn window_close_system(mut exit: EventWriter<AppExit>, keys: Res<ButtonInput<KeyCode>>) {
     if keys.pressed(KeyCode::Escape) {
-        exit.send(AppExit);
+        exit.send(AppExit::Success);
     }
 }
 

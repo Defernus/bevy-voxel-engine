@@ -27,9 +27,9 @@ impl BiomeGenerator for CaveBiomeGenerator {
     }
 
     fn get_voxel_color(&self, _generator: &NoiseGenerator, _pos: Vec3, value: f32) -> Color {
-        let mut color = Color::rgb(0.3, 0.3, 0.4);
+        let mut color = Color::srgb(0.3, 0.3, 0.4);
         if self.layer2d.stalactites_val < 0.1 && value < 0.001 {
-            color = Color::rgb(
+            color = Color::srgb(
                 0.3,
                 0.3 + self.layer2d.moss_val * 0.3,
                 0.4 + self.layer2d.moss_val * 0.6,

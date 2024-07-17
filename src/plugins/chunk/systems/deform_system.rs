@@ -121,7 +121,7 @@ pub fn chunk_deform_system(
             &mut materials,
             dt,
             DeformType::Fill(Voxel {
-                color: Color::rgb(0.3, 0.3, 0.4),
+                color: Color::srgb(0.3, 0.3, 0.4),
                 value: 1.,
             }),
         );
